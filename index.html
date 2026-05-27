@@ -1,0 +1,1330 @@
+<!doctype html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>AIO / LLM Search Mastery Lab</title>
+  <style>
+    :root {
+      --bg: #f7f8fb;
+      --paper: #ffffff;
+      --ink: #17212f;
+      --muted: #627084;
+      --line: #d8dee8;
+      --teal: #0f766e;
+      --blue: #2563eb;
+      --amber: #b45309;
+      --coral: #dc5b46;
+      --green: #15803d;
+      --red: #b91c1c;
+      --violet: #6d28d9;
+      --shadow: 0 10px 28px rgba(23, 33, 47, .08);
+      --radius: 8px;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      margin: 0;
+      color: var(--ink);
+      background: var(--bg);
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      line-height: 1.6;
+      letter-spacing: 0;
+    }
+
+    a {
+      color: var(--blue);
+      text-decoration-thickness: 1px;
+      text-underline-offset: 3px;
+    }
+
+    button,
+    input,
+    select,
+    textarea {
+      font: inherit;
+    }
+
+    button {
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      background: var(--paper);
+      color: var(--ink);
+      min-height: 40px;
+      padding: 8px 12px;
+      cursor: pointer;
+    }
+
+    button:hover,
+    button[aria-pressed="true"] {
+      border-color: var(--teal);
+      background: #e8f5f3;
+    }
+
+    .app-shell {
+      display: grid;
+      grid-template-columns: 232px minmax(0, 1fr) 264px;
+      gap: 22px;
+      max-width: 1540px;
+      margin: 0 auto;
+      padding: 20px;
+    }
+
+    .side,
+    .progress {
+      position: sticky;
+      top: 16px;
+      align-self: start;
+      background: var(--paper);
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+    }
+
+    .side {
+      padding: 14px;
+      max-height: calc(100vh - 32px);
+      overflow: auto;
+    }
+
+    .brand {
+      display: grid;
+      grid-template-columns: 34px 1fr;
+      gap: 10px;
+      align-items: center;
+      margin-bottom: 14px;
+      padding-bottom: 12px;
+      border-bottom: 1px solid var(--line);
+    }
+
+    .brand-mark {
+      display: grid;
+      place-items: center;
+      width: 34px;
+      height: 34px;
+      border-radius: 7px;
+      background: var(--ink);
+      color: white;
+      font-weight: 800;
+    }
+
+    .brand strong {
+      display: block;
+      font-size: 14px;
+    }
+
+    .brand span {
+      display: block;
+      color: var(--muted);
+      font-size: 12px;
+    }
+
+    nav a {
+      display: block;
+      padding: 8px 9px;
+      border-radius: 7px;
+      color: var(--ink);
+      text-decoration: none;
+      font-size: 14px;
+    }
+
+    nav a:hover,
+    nav a.active {
+      background: #e8f5f3;
+      color: #0f5e58;
+    }
+
+    main {
+      min-width: 0;
+    }
+
+    section {
+      background: var(--paper);
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      margin-bottom: 22px;
+      padding: 22px;
+      scroll-margin-top: 16px;
+    }
+
+    .intro {
+      display: grid;
+      grid-template-columns: minmax(0, 1.15fr) minmax(280px, .85fr);
+      gap: 18px;
+      align-items: stretch;
+    }
+
+    .eyebrow {
+      color: var(--teal);
+      font-weight: 700;
+      font-size: 13px;
+      text-transform: uppercase;
+    }
+
+    h1,
+    h2,
+    h3 {
+      line-height: 1.25;
+      margin: 0;
+      letter-spacing: 0;
+    }
+
+    h1 {
+      font-size: clamp(28px, 4vw, 44px);
+      margin: 8px 0 12px;
+    }
+
+    h2 {
+      font-size: 24px;
+      margin-bottom: 12px;
+    }
+
+    h3 {
+      font-size: 18px;
+      margin: 20px 0 8px;
+    }
+
+    p {
+      margin: 0 0 12px;
+    }
+
+    .lead {
+      color: #344155;
+      font-size: 17px;
+      max-width: 860px;
+    }
+
+    .stat-grid,
+    .domain-grid,
+    .engine-grid,
+    .persona-grid,
+    .book-grid {
+      display: grid;
+      gap: 12px;
+    }
+
+    .stat-grid {
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      margin-top: 16px;
+    }
+
+    .stat,
+    .domain,
+    .engine,
+    .persona,
+    .book,
+    .quiz-card,
+    .source-card {
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      background: #fff;
+      padding: 14px;
+    }
+
+    .stat strong {
+      display: block;
+      font-size: 26px;
+    }
+
+    .stat span,
+    .meta,
+    .small {
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    .progress {
+      padding: 16px;
+    }
+
+    .progress h2 {
+      font-size: 18px;
+    }
+
+    .meter {
+      height: 10px;
+      background: #e9edf4;
+      border-radius: 999px;
+      overflow: hidden;
+      margin: 10px 0 12px;
+    }
+
+    .meter > span {
+      display: block;
+      width: 0;
+      height: 100%;
+      background: linear-gradient(90deg, var(--teal), var(--blue));
+      transition: width .25s ease;
+    }
+
+    .progress-row {
+      display: flex;
+      justify-content: space-between;
+      gap: 10px;
+      padding: 8px 0;
+      border-bottom: 1px solid var(--line);
+      font-size: 14px;
+    }
+
+    .progress-row:last-child {
+      border-bottom: 0;
+    }
+
+    .tag-row,
+    .toolbar,
+    .quiz-options {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      align-items: center;
+    }
+
+    .tag {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      border-radius: 999px;
+      background: #edf2f7;
+      color: #38475b;
+      font-size: 12px;
+      padding: 4px 9px;
+      white-space: nowrap;
+    }
+
+    .tag.teal { background: #dff4ef; color: #0f5e58; }
+    .tag.amber { background: #fff0d8; color: #8a4500; }
+    .tag.coral { background: #ffe5df; color: #a83d2b; }
+    .tag.blue { background: #e7eeff; color: #174ea6; }
+    .tag.violet { background: #efe7ff; color: #5422a8; }
+
+    .diagram-tabs {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 8px;
+      margin: 12px 0;
+    }
+
+    .diagram {
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      background: #fbfcfe;
+      padding: 14px;
+      min-height: 250px;
+    }
+
+    .diagram svg {
+      width: 100%;
+      height: auto;
+      display: block;
+    }
+
+    .diagram text {
+      font-family: inherit;
+      fill: var(--ink);
+      font-size: 13px;
+    }
+
+    .domain-grid {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+
+    .domain strong,
+    .engine strong,
+    .persona strong,
+    .book strong,
+    .source-card strong {
+      display: block;
+      margin-bottom: 6px;
+    }
+
+    .process-grid {
+      display: grid;
+      grid-template-columns: repeat(5, minmax(0, 1fr));
+      gap: 10px;
+      counter-reset: step;
+    }
+
+    .step {
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      background: #fbfcfe;
+      padding: 12px;
+      min-height: 142px;
+      position: relative;
+    }
+
+    .step::before {
+      counter-increment: step;
+      content: counter(step);
+      display: grid;
+      place-items: center;
+      width: 26px;
+      height: 26px;
+      border-radius: 50%;
+      background: var(--teal);
+      color: white;
+      font-weight: 700;
+      margin-bottom: 8px;
+    }
+
+    .engine-grid {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+
+    .engine ul,
+    .book ul {
+      margin: 8px 0 0 18px;
+      padding: 0;
+    }
+
+    .persona-grid {
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+    }
+
+    .persona.selected {
+      border-color: var(--teal);
+      box-shadow: 0 0 0 3px rgba(15, 118, 110, .14);
+    }
+
+    .builder {
+      display: grid;
+      grid-template-columns: minmax(0, .9fr) minmax(0, 1.1fr);
+      gap: 14px;
+      margin-top: 14px;
+    }
+
+    textarea {
+      width: 100%;
+      min-height: 170px;
+      resize: vertical;
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      padding: 12px;
+      background: #fbfcfe;
+      color: var(--ink);
+    }
+
+    .framework {
+      display: grid;
+      grid-template-columns: repeat(6, minmax(0, 1fr));
+      gap: 8px;
+    }
+
+    .framework div {
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      padding: 12px;
+      min-height: 128px;
+      background: #fbfcfe;
+    }
+
+    .framework strong {
+      display: block;
+      color: var(--teal);
+      margin-bottom: 6px;
+    }
+
+    .table-wrap {
+      overflow: auto;
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      background: white;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      min-width: 980px;
+      font-size: 14px;
+    }
+
+    th,
+    td {
+      padding: 10px 12px;
+      border-bottom: 1px solid var(--line);
+      vertical-align: top;
+      text-align: left;
+    }
+
+    th {
+      background: #f1f5f9;
+      position: sticky;
+      top: 0;
+      z-index: 1;
+    }
+
+    tbody tr:hover {
+      background: #fbfcfe;
+    }
+
+    .toolbar {
+      justify-content: space-between;
+      margin: 12px 0;
+    }
+
+    .filters {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 7px;
+    }
+
+    .searchbox {
+      min-width: 240px;
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      padding: 9px 11px;
+      background: white;
+    }
+
+    .book-grid {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+
+    .quiz-layout {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) 260px;
+      gap: 14px;
+    }
+
+    .quiz-card {
+      margin-bottom: 12px;
+    }
+
+    .quiz-options label {
+      display: inline-flex;
+      gap: 8px;
+      align-items: center;
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      padding: 8px 10px;
+      background: #fbfcfe;
+      min-height: 40px;
+    }
+
+    .feedback {
+      margin-top: 10px;
+      padding: 10px;
+      border-radius: var(--radius);
+      background: #f1f5f9;
+      color: #344155;
+      display: none;
+    }
+
+    .feedback.correct {
+      display: block;
+      background: #e5f7eb;
+      color: #125c2e;
+    }
+
+    .feedback.wrong {
+      display: block;
+      background: #ffe9e6;
+      color: #8c261b;
+    }
+
+    .score-panel {
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      padding: 14px;
+      align-self: start;
+      background: #fbfcfe;
+      position: sticky;
+      top: 16px;
+    }
+
+    .score {
+      font-size: 38px;
+      font-weight: 800;
+      line-height: 1;
+      margin: 8px 0;
+    }
+
+    .source-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 12px;
+    }
+
+    .note {
+      border-left: 4px solid var(--amber);
+      background: #fff8ec;
+      padding: 12px 14px;
+      border-radius: 0 var(--radius) var(--radius) 0;
+      margin: 14px 0;
+    }
+
+    .mobile-bar {
+      display: none;
+    }
+
+    .mobile-select {
+      max-width: 46vw;
+      min-height: 38px;
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      padding: 7px 9px;
+      background: #fff;
+      color: var(--ink);
+    }
+
+    @media (max-width: 1400px) {
+      .app-shell {
+        grid-template-columns: 220px minmax(0, 1fr);
+      }
+
+      .progress {
+        display: none;
+      }
+    }
+
+    @media (max-width: 1180px) {
+      .app-shell {
+        grid-template-columns: 210px minmax(0, 1fr);
+      }
+
+      .progress {
+        display: none;
+      }
+
+      .intro,
+      .builder,
+      .quiz-layout {
+        grid-template-columns: 1fr;
+      }
+
+      .stat-grid,
+      .domain-grid,
+      .engine-grid,
+      .persona-grid,
+      .book-grid,
+      .source-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+
+      .framework,
+      .process-grid {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+      }
+    }
+
+    @media (max-width: 760px) {
+      .app-shell {
+        display: block;
+        padding: 74px 12px 12px;
+      }
+
+      .side {
+        display: none;
+      }
+
+      .mobile-bar {
+        position: fixed;
+        z-index: 10;
+        top: 0;
+        left: 0;
+        right: 0;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        justify-content: space-between;
+        padding: 10px 12px;
+        background: rgba(255, 255, 255, .94);
+        border-bottom: 1px solid var(--line);
+        backdrop-filter: blur(10px);
+      }
+
+      section {
+        padding: 16px;
+      }
+
+      .stat-grid,
+      .domain-grid,
+      .engine-grid,
+      .persona-grid,
+      .book-grid,
+      .source-grid,
+      .framework,
+      .process-grid,
+      .diagram-tabs {
+        grid-template-columns: 1fr;
+      }
+
+      h1 {
+        font-size: 31px;
+      }
+
+      table {
+        min-width: 760px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="mobile-bar">
+    <strong>AIO Lab</strong>
+    <select id="mobileChapterSelect" class="mobile-select" aria-label="章へ移動">
+      <option value="#overview">全体像</option>
+      <option value="#process">研究プロセス</option>
+      <option value="#mechanics">LLM検索</option>
+      <option value="#engines">検索AI比較</option>
+      <option value="#persona">ペルソナ</option>
+      <option value="#framework">実務フレーム</option>
+      <option value="#papers">論文マップ</option>
+      <option value="#books">本・講義</option>
+      <option value="#quiz">テスト</option>
+      <option value="#sources">出典</option>
+    </select>
+    <span id="mobileProgress" class="tag teal">0% complete</span>
+  </div>
+
+  <div class="app-shell">
+    <aside class="side" aria-label="章ナビゲーション">
+      <div class="brand">
+        <div class="brand-mark">AI</div>
+        <div>
+          <strong>AIO Mastery Lab</strong>
+          <span>LLM検索・ペルソナ・実務設計</span>
+        </div>
+      </div>
+      <nav id="chapterNav">
+        <a href="#overview">全体像</a>
+        <a href="#process">研究プロセス</a>
+        <a href="#mechanics">LLM検索の仕組み</a>
+        <a href="#engines">検索AI比較</a>
+        <a href="#persona">全人類ペルソナ</a>
+        <a href="#framework">AIO実務フレーム</a>
+        <a href="#papers">100本超論文マップ</a>
+        <a href="#books">買う価値のある本</a>
+        <a href="#quiz">理解度テスト</a>
+        <a href="#sources">出典と次タスク</a>
+      </nav>
+    </aside>
+
+    <main>
+      <section id="overview" data-chapter="overview">
+        <div class="intro">
+          <div>
+            <div class="eyebrow">Start here</div>
+            <h1>AIOはSEOの置き換えではなく、回答生成面で「採用される証拠」になる技術です。</h1>
+            <p class="lead">この教材は、情報検索、RAG、引用評価、AI検索UI、ペルソナ/ユーザーモデリング、人間の情報探索行動を一本の体系に接続します。目的は「AIがどう検索して、どの情報を証拠として選び、どの人間の意思決定に影響するか」を実務で設計できる状態にすることです。</p>
+            <div class="tag-row">
+              <span class="tag teal">論文 <span id="paperCount">0</span> 本</span>
+              <span class="tag blue">図解 4種</span>
+              <span class="tag amber">理解度テスト 12問</span>
+              <span class="tag coral">2026-05時点のAI検索論点</span>
+            </div>
+          </div>
+          <div class="diagram" aria-label="AIOの全体図">
+            <svg viewBox="0 0 560 360" role="img">
+              <defs>
+                <marker id="arrow" markerWidth="10" markerHeight="10" refX="8" refY="5" orient="auto">
+                  <path d="M0,0 L10,5 L0,10 z" fill="#627084"></path>
+                </marker>
+              </defs>
+              <rect x="20" y="35" width="130" height="62" rx="8" fill="#e7eeff" stroke="#2563eb"></rect>
+              <text x="85" y="63" text-anchor="middle" font-weight="700">User Query</text>
+              <text x="85" y="83" text-anchor="middle">曖昧な質問</text>
+              <path d="M150 66 H235" stroke="#627084" stroke-width="2" marker-end="url(#arrow)"></path>
+              <rect x="235" y="24" width="130" height="84" rx="8" fill="#dff4ef" stroke="#0f766e"></rect>
+              <text x="300" y="55" text-anchor="middle" font-weight="700">Query Fan-out</text>
+              <text x="300" y="76" text-anchor="middle">複数検索へ分解</text>
+              <path d="M365 66 H445" stroke="#627084" stroke-width="2" marker-end="url(#arrow)"></path>
+              <rect x="445" y="35" width="95" height="62" rx="8" fill="#fff0d8" stroke="#b45309"></rect>
+              <text x="492" y="63" text-anchor="middle" font-weight="700">Sources</text>
+              <text x="492" y="83" text-anchor="middle">候補証拠</text>
+              <path d="M492 98 V150" stroke="#627084" stroke-width="2" marker-end="url(#arrow)"></path>
+              <rect x="350" y="150" width="190" height="72" rx="8" fill="#ffe5df" stroke="#dc5b46"></rect>
+              <text x="445" y="180" text-anchor="middle" font-weight="700">Synthesis</text>
+              <text x="445" y="202" text-anchor="middle">回答・引用・比較表</text>
+              <path d="M350 186 H270" stroke="#627084" stroke-width="2" marker-end="url(#arrow)"></path>
+              <rect x="120" y="150" width="150" height="72" rx="8" fill="#efe7ff" stroke="#6d28d9"></rect>
+              <text x="195" y="180" text-anchor="middle" font-weight="700">AIO Design</text>
+              <text x="195" y="202" text-anchor="middle">証拠として採用</text>
+              <path d="M195 222 V278" stroke="#627084" stroke-width="2" marker-end="url(#arrow)"></path>
+              <rect x="65" y="278" width="260" height="52" rx="8" fill="#f1f5f9" stroke="#94a3b8"></rect>
+              <text x="195" y="308" text-anchor="middle" font-weight="700">Crawlable + Citable + Decidable</text>
+            </svg>
+          </div>
+        </div>
+
+        <div class="stat-grid" aria-label="学習ゴール">
+          <div class="stat"><strong>1</strong><span>検索UIではなく、回答生成パイプラインとして見る</span></div>
+          <div class="stat"><strong>2</strong><span>ペルソナを属性ではなく、証拠ニーズで切る</span></div>
+          <div class="stat"><strong>3</strong><span>引用率、主張支持率、回答内採用率を測る</span></div>
+          <div class="stat"><strong>4</strong><span>実務では「正確性・構造・実体・更新性」を揃える</span></div>
+        </div>
+      </section>
+
+      <section id="process" data-chapter="process">
+        <h2>プロセスの細分化</h2>
+        <p>Google Scholar、arXiv、ACL Anthology、ACM Digital Library、OpenAlex、PMLR、公式ヘルプ/開発者ドキュメントを入口にして、論文を「検索技術」「人間行動」「AI回答面」「実務測定」に分解して読む。読む順番は新しさではなく、依存関係で決めます。</p>
+        <div class="process-grid">
+          <div class="step"><strong>探索</strong><p class="small">Scholar/arXiv/ACL/ACM/OpenAlexで種論文を集め、引用・被引用で広げる。</p></div>
+          <div class="step"><strong>採択</strong><p class="small">一次ソース、被引用、再現性、AIO実務への接続で残す。SEO記事は原則除外。</p></div>
+          <div class="step"><strong>分解</strong><p class="small">主張、手法、評価指標、限界、実務含意を1論文ずつ分ける。</p></div>
+          <div class="step"><strong>統合</strong><p class="small">RAG、引用、検索行動、ペルソナ、事業KPIを同じ地図に載せる。</p></div>
+          <div class="step"><strong>検証</strong><p class="small">AI検索で同一クエリを反復観察し、引用と主張支持を監査する。</p></div>
+        </div>
+
+        <h3>100本レビューの採択基準</h3>
+        <div class="domain-grid">
+          <div class="domain"><strong>一次性</strong><p>論文、公式ドキュメント、著者ページを優先。まとめ記事は仮説生成にだけ使う。</p></div>
+          <div class="domain"><strong>再現性</strong><p>データセット、評価指標、ベンチマーク、明示的な観測手順があるものを重く見る。</p></div>
+          <div class="domain"><strong>実務転用</strong><p>「何を書けば引用されるか」ではなく、どんな証拠構造が選ばれるかに変換できるものを選ぶ。</p></div>
+        </div>
+      </section>
+
+      <section id="mechanics" data-chapter="mechanics">
+        <h2>LLM検索の仕組み</h2>
+        <p>AI検索は単一のランキングではなく、クエリ書き換え、複数検索、候補文書の読解、回答生成、引用提示、UI統合が重なったシステムです。AIOで効くのは「順位」だけでなく、質問の分解後に拾われるサブトピック、引用しやすい記述、機械が取り出せる構造、主張を支える一次証拠です。</p>
+        <div class="diagram-tabs" role="tablist" aria-label="図解切り替え">
+          <button class="diagram-tab" data-diagram="rag" aria-pressed="true">RAG</button>
+          <button class="diagram-tab" data-diagram="fanout" aria-pressed="false">Query fan-out</button>
+          <button class="diagram-tab" data-diagram="citation" aria-pressed="false">引用監査</button>
+          <button class="diagram-tab" data-diagram="funnel" aria-pressed="false">可視性ファネル</button>
+        </div>
+        <div id="diagramStage" class="diagram"></div>
+      </section>
+
+      <section id="engines" data-chapter="engines">
+        <h2>著名AI検索の行動比較</h2>
+        <p>最新の公式情報では、ChatGPT Searchはユーザー質問を検索クエリに書き換え、必要に応じて追加検索し、Sourcesや引用を提示します。Google AI Overviews/AI Mode、Copilot Search、Perplexityも「検索結果を並べる」より「回答を組み立てる」方向です。</p>
+        <div class="engine-grid" id="engineGrid"></div>
+        <div class="note">観測時はログイン状態、国、言語、端末、位置情報、検索履歴、同一クエリ反復回数を記録します。1回のスクショから一般化しないことが重要です。</div>
+      </section>
+
+      <section id="persona" data-chapter="persona">
+        <h2>全人類ペルソナ: 属性ではなく証拠ニーズで切る</h2>
+        <p>LLM検索では「30代男性」より「意思決定の不安」「比較したい軸」「信じる証拠」「失敗したくない制約」が強く効きます。ペルソナは人間を雑に分類する道具ではなく、検索意図と証拠要求を設計するための仮説です。</p>
+        <div class="persona-grid" id="personaGrid"></div>
+        <div class="builder">
+          <div>
+            <h3>ペルソナ入力</h3>
+            <textarea id="personaInput" aria-label="ペルソナ入力">例: 初めてAIOに投資する事業責任者。SEO流入低下が不安で、社内説明に使える根拠と短期KPIを欲しがっている。</textarea>
+          </div>
+          <div>
+            <h3>証拠ニーズ変換</h3>
+            <textarea id="personaOutput" aria-label="証拠ニーズ出力" readonly></textarea>
+          </div>
+        </div>
+      </section>
+
+      <section id="framework" data-chapter="framework">
+        <h2>AIO実務フレーム</h2>
+        <p>実務では「LLMに好かれる文章」を狙うのではなく、検索エンジン/回答エンジンが検出でき、ユーザーが意思決定に使え、引用が主張を支える状態を作ります。</p>
+        <div class="framework">
+          <div><strong>Query</strong><p>人間が実際に聞く自然文、比較、制約、ローカル、購入前不安を集める。</p></div>
+          <div><strong>Intent</strong><p>情報探索、比較、実行、購入、検証、緊急性を分ける。</p></div>
+          <div><strong>Evidence</strong><p>一次データ、価格、手順、著者性、更新日、引用可能な根拠を置く。</p></div>
+          <div><strong>Structure</strong><p>見出し、表、FAQ、定義、手順、比較軸を機械が抜ける形にする。</p></div>
+          <div><strong>Entity</strong><p>ブランド、商品、人物、所在地、カテゴリ、評判の表記を外部と一貫させる。</p></div>
+          <div><strong>Measurement</strong><p>発火率、引用率、主張支持率、Top10重複、指名検索、直接流入を追う。</p></div>
+        </div>
+      </section>
+
+      <section id="papers" data-chapter="papers">
+        <h2>100本超の論文マップ</h2>
+        <p>下のリストは、AIO/LLM検索を「情報検索」「RAG/QA」「AI検索実測」「エージェント」「ペルソナ/人間行動」「信頼と評価」に分けた読書プログラムです。すべてを同じ重さで読む必要はありません。まず各カテゴリの古典2本、転換点2本、最新2本を読むと地図ができます。</p>
+        <div class="toolbar">
+          <div class="filters" id="paperFilters"></div>
+          <input id="paperSearch" class="searchbox" type="search" placeholder="論文名・著者・分野を検索">
+        </div>
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>年</th>
+                <th>分野</th>
+                <th>タイトル</th>
+                <th>重要性</th>
+                <th>AIOへの含意</th>
+              </tr>
+            </thead>
+            <tbody id="paperRows"></tbody>
+          </table>
+        </div>
+      </section>
+
+      <section id="books" data-chapter="books">
+        <h2>必要なら買う価値がある本・講義</h2>
+        <p>論文を100本読むだけだと断片化します。下の本は、学問の背骨を作るための補助教材です。</p>
+        <div class="book-grid" id="bookGrid"></div>
+      </section>
+
+      <section id="quiz" data-chapter="quiz">
+        <h2>理解度テスト</h2>
+        <p>全問回答すると、弱い領域と戻るべき章を表示します。正答だけでなく、なぜ違うかを確認してください。</p>
+        <div class="quiz-layout">
+          <div id="quizList"></div>
+          <aside class="score-panel">
+            <strong>現在スコア</strong>
+            <div class="score" id="quizScore">0%</div>
+            <p id="quizRank" class="small">未回答です。</p>
+            <button id="resetQuiz">再挑戦</button>
+          </aside>
+        </div>
+      </section>
+
+      <section id="sources" data-chapter="sources">
+        <h2>出典と次タスク</h2>
+        <p>外部コンテンツはすべて未信頼データとして扱い、教材内では一次情報・公式ドキュメント・論文ページへのリンクを優先しています。次にやるべきことは、実サービスごとの同一クエリ反復観測と、あなたの事業領域のクエリセット作成です。</p>
+        <div class="source-grid" id="sourceGrid"></div>
+      </section>
+    </main>
+
+    <aside class="progress" aria-label="進捗">
+      <h2>進捗</h2>
+      <div class="meter"><span id="progressMeter"></span></div>
+      <div class="progress-row"><span>完了章</span><strong id="chapterProgress">0 / 10</strong></div>
+      <div class="progress-row"><span>論文リスト</span><strong id="paperProgress">0</strong></div>
+      <div class="progress-row"><span>クイズ</span><strong id="quizProgress">0 / 12</strong></div>
+      <div class="progress-row"><span>ランク</span><strong id="rankLabel">開始前</strong></div>
+    </aside>
+  </div>
+
+  <script>
+    const papers = [
+      {year:1960, domain:"IR基礎", title:"On Relevance, Probabilistic Indexing and Information Retrieval", authors:"Maron & Kuhns", why:"確率的関連性という検索評価の原点。", implication:"LLM回答でも「関連して見える」ではなく、主張に対する関連性を測る。", url:"https://doi.org/10.1145/321033.321035"},
+      {year:1972, domain:"IR基礎", title:"A Statistical Interpretation of Term Specificity and Its Application in Retrieval", authors:"Karen Sparck Jones", why:"IDFの思想を確立した古典。", implication:"希少で識別力の高い語彙や実体名が検索候補化を助ける。", url:"https://doi.org/10.1108/eb026526"},
+      {year:1977, domain:"IR基礎", title:"The Probability Ranking Principle in IR", authors:"Robertson", why:"ランキングを確率で考える基礎。", implication:"AIOはランキングを超えるが、候補選択の確率思想は残る。", url:"https://doi.org/10.1108/eb026647"},
+      {year:1994, domain:"IR基礎", title:"Some Simple Effective Approximations to the 2-Poisson Model for Probabilistic Weighted Retrieval", authors:"Robertson & Walker", why:"BM25系の実務基盤。", implication:"古典的検索の強さを理解しないAIO施策は薄い。", url:"https://doi.org/10.1145/188490.188561"},
+      {year:1998, domain:"IR基礎", title:"A Language Modeling Approach to Information Retrieval", authors:"Ponte & Croft", why:"検索を言語モデルとして扱う流れを開いた。", implication:"生成AI検索は言語モデルIRの延長で理解しやすい。", url:"https://doi.org/10.1145/290941.291008"},
+      {year:2001, domain:"IR基礎", title:"Document Language Models, Query Models, and Risk Minimization for Information Retrieval", authors:"Lafferty & Zhai", why:"文書モデルとクエリモデルの統合。", implication:"クエリ拡張やfan-outを理論的に読む土台。", url:"https://doi.org/10.1145/383952.383970"},
+      {year:2005, domain:"IR基礎", title:"A Markov Random Field Model for Term Dependencies", authors:"Metzler & Croft", why:"語の依存関係をランキングに入れる代表作。", implication:"見出し、近接語、比較軸の配置が候補抽出に効く。", url:"https://doi.org/10.1145/1076034.1076115"},
+      {year:1998, domain:"Web検索", title:"The Anatomy of a Large-Scale Hypertextual Web Search Engine", authors:"Brin & Page", why:"Google型Web検索の設計思想。", implication:"リンク、アンカー、クロール可能性はAIOでも土台。", url:"http://infolab.stanford.edu/~backrub/google.html"},
+      {year:1999, domain:"Web検索", title:"The PageRank Citation Ranking: Bringing Order to the Web", authors:"Page et al.", why:"引用/リンクを権威シグナルにした。", implication:"LLM引用でも外部での一貫した実体評価が効く。", url:"https://ilpubs.stanford.edu:8090/422/1/1999-66.pdf"},
+      {year:2002, domain:"Web検索", title:"A Taxonomy of Web Search", authors:"Broder", why:"情報探索・ナビゲーション・取引意図を整理。", implication:"AIOクエリ設計は検索意図の分類から始まる。", url:"https://doi.org/10.1145/792550.792552"},
+      {year:2002, domain:"Web検索", title:"Optimizing Search Engines Using Clickthrough Data", authors:"Joachims", why:"クリックログによるランキング学習。", implication:"AI回答後のクリック減少は評価設計を変える。", url:"https://doi.org/10.1145/775047.775067"},
+      {year:2004, domain:"Web検索", title:"Understanding User Goals in Web Search", authors:"Rose & Levinson", why:"Web検索意図の実務的分類。", implication:"ペルソナ別に期待する回答形式を分ける基礎。", url:"https://www2004.org/proceedings/docs/1p13.pdf"},
+      {year:2005, domain:"Web検索", title:"Personalizing Search via Automated Analysis of Interests and Activities", authors:"Teevan, Dumais & Horvitz", why:"個人文脈をランキングに入れる。", implication:"AI検索ではメモリ、位置、履歴が回答を変える。", url:"https://doi.org/10.1145/1060745.1060763"},
+      {year:2006, domain:"Web検索", title:"Investigating Behavioral Variability in Web Search", authors:"White & Drucker", why:"同じ検索でも行動が大きく揺れることを示す。", implication:"AIO観測は反復と条件固定が必須。", url:"https://doi.org/10.1145/1135777.1135807"},
+      {year:2008, domain:"Web検索", title:"Determining the Informational, Navigational, and Transactional Intent of Web Queries", authors:"Jansen, Booth & Spink", why:"検索意図分類を大規模ログで検証。", implication:"商用/情報/比較クエリでAIO施策を分ける。", url:"https://doi.org/10.1016/j.ipm.2008.07.015"},
+      {year:2010, domain:"Web検索", title:"Exploratory Search: From Finding to Understanding", authors:"Marchionini", why:"単発検索から理解形成への転換。", implication:"AI Mode型の連続探索を設計する視点。", url:"https://doi.org/10.1145/1743546.1743568"},
+      {year:2014, domain:"Web検索", title:"The Search Engine Manipulation Effect", authors:"Epstein & Robertson", why:"検索順位が意思決定に与える影響。", implication:"AI回答面はさらに強い編集効果を持ちうる。", url:"https://doi.org/10.1073/pnas.1419828112"},
+      {year:2016, domain:"Web検索", title:"Searching as Learning: A Review of Recent Research", authors:"Vakkari", why:"検索を学習行為として捉える。", implication:"教材型コンテンツがAI回答で要約される意味を考える。", url:"https://doi.org/10.1002/pra2.2016.14505301042"},
+      {year:2016, domain:"ランキング", title:"A Deep Relevance Matching Model for Ad-hoc Retrieval", authors:"Guo et al.", why:"ニューラルマッチングの代表。", implication:"単語一致だけでなく意味的近さが候補化を左右する。", url:"https://doi.org/10.1145/2983323.2983769"},
+      {year:2017, domain:"ランキング", title:"Learning to Match Using Local and Distributed Representations of Text for Web Search", authors:"Mitra, Diaz & Craswell", why:"Duetモデルで局所一致と分散表現を統合。", implication:"定義語と意味説明の両方をページに置く理由になる。", url:"https://doi.org/10.1145/3077136.3080809"},
+      {year:2019, domain:"ランキング", title:"Passage Re-ranking with BERT", authors:"Nogueira & Cho", why:"BERT再ランキングの実用転換点。", implication:"LLM検索前段の再ランキング理解に必須。", url:"https://arxiv.org/abs/1901.04085"},
+      {year:2019, domain:"ランキング", title:"Deeper Text Understanding for IR with Contextual Neural Language Modeling", authors:"Dai & Callan", why:"文脈化LMをIRへ導入。", implication:"ページ単位よりパッセージ単位の答えやすさが重要。", url:"https://arxiv.org/abs/1905.09217"},
+      {year:2020, domain:"ランキング", title:"Dense Passage Retrieval for Open-Domain Question Answering", authors:"Karpukhin et al.", why:"DPRはdense retrievalの標準起点。", implication:"AIOで拾われるにはパッセージの意味検索適合が必要。", url:"https://arxiv.org/abs/2004.04906"},
+      {year:2020, domain:"ランキング", title:"ColBERT: Efficient and Effective Passage Search via Contextualized Late Interaction over BERT", authors:"Khattab & Zaharia", why:"遅延相互作用で精度と速度を両立。", implication:"短い回答断片の語レベル根拠が評価される。", url:"https://arxiv.org/abs/2004.12832"},
+      {year:2021, domain:"ランキング", title:"Approximate Nearest Neighbor Negative Contrastive Learning for Dense Text Retrieval", authors:"Xiong et al.", why:"ANCEでdense retrieval訓練を強化。", implication:"類似文書群の中で識別される具体性が必要。", url:"https://arxiv.org/abs/2007.00808"},
+      {year:2021, domain:"ランキング", title:"SPLADE: Sparse Lexical and Expansion Model for First Stage Ranking", authors:"Formal et al.", why:"語彙拡張とスパース検索を統合。", implication:"明示語彙と意味拡張の両方に対応する設計が有効。", url:"https://arxiv.org/abs/2107.05720"},
+      {year:2022, domain:"ランキング", title:"ColBERTv2: Efficient and Effective Retrieval via Lightweight Late Interaction", authors:"Santhanam et al.", why:"高精度検索の効率化。", implication:"大量ページから引用候補を抜く実装感覚を掴む。", url:"https://arxiv.org/abs/2112.01488"},
+      {year:2022, domain:"ランキング", title:"Text Embeddings by Weakly-Supervised Contrastive Pre-training", authors:"Wang et al.", why:"E5系埋め込みの基盤。", implication:"検索向け埋め込みが汎用LLM埋め込みと違う理由を学ぶ。", url:"https://arxiv.org/abs/2212.03533"},
+      {year:2023, domain:"ランキング", title:"BGE: BAAI General Embedding", authors:"Xiao et al.", why:"実務RAGで頻出の汎用埋め込み。", implication:"自社ナレッジRAGと外部AIO理解をつなぐ。", url:"https://arxiv.org/abs/2309.07597"},
+      {year:1982, domain:"情報行動", title:"Anomalous States of Knowledge as a Basis for Information Retrieval", authors:"Belkin, Oddy & Brooks", why:"人は不足知識から検索するという視点。", implication:"AIOは明確なキーワードより不安・欠落に答える。", url:"https://doi.org/10.1108/eb026722"},
+      {year:1989, domain:"情報行動", title:"The Design of Browsing and Berrypicking Techniques for the Online Search Interface", authors:"Bates", why:"検索は一直線ではなく摘み取り型。", implication:"AI Modeの会話探索を説明する古典。", url:"https://doi.org/10.1108/eb024320"},
+      {year:1989, domain:"情報行動", title:"A Behavioural Approach to Information Retrieval System Design", authors:"Ellis", why:"探索行動を連鎖的活動として整理。", implication:"コンテンツは単一回答だけでなく探索導線を持つべき。", url:"https://doi.org/10.1108/eb026843"},
+      {year:1991, domain:"情報行動", title:"Inside the Search Process: Information Seeking from the User's Perspective", authors:"Kuhlthau", why:"不確実性と感情を検索過程に入れた。", implication:"ペルソナ設計に不安と確信形成を入れる。", url:"https://doi.org/10.1002/(SICI)1097-4571(199106)42:5%3C361::AID-ASI6%3E3.0.CO;2-%23"},
+      {year:1995, domain:"情報行動", title:"Everyday Life Information Seeking", authors:"Savolainen", why:"日常文脈で情報探索を捉える。", implication:"生活者AIOでは専門語より状況語が鍵になる。", url:"https://doi.org/10.1086/602508"},
+      {year:1999, domain:"情報行動", title:"Information Foraging", authors:"Pirolli & Card", why:"情報の匂いと探索コストをモデル化。", implication:"AI回答はユーザーの探索コストを奪うので、引用先に行く理由が必要。", url:"https://doi.org/10.1037/0033-295X.106.4.643"},
+      {year:1999, domain:"情報行動", title:"Models in Information Behaviour Research", authors:"Wilson", why:"情報行動モデルの整理。", implication:"ペルソナを検索行動モデルと接続する。", url:"https://doi.org/10.1108/EUM0000000007144"},
+      {year:2004, domain:"情報行動", title:"A Social Cognitive Theory of Internet Uses and Gratifications", authors:"LaRose & Eastin", why:"オンライン行動の動機を説明。", implication:"AI検索利用の習慣化と信頼形成を考える材料。", url:"https://doi.org/10.1207/s15506878jobem4803_2"},
+      {year:2007, domain:"情報行動", title:"Information Behaviour of the Researcher of the Future", authors:"CIBER", why:"デジタル世代の探索行動を分析。", implication:"短い回答消費と深い検証のギャップを理解する。", url:"https://www.jisc.ac.uk/reports/information-behaviour-of-the-researcher-of-the-future"},
+      {year:2011, domain:"情報行動", title:"Search Expertise", authors:"White, Dumais & Teevan", why:"検索熟達者と一般ユーザーの違い。", implication:"AIO教材は検索スキルをAI監査スキルへ拡張する。", url:"https://doi.org/10.1145/1978942.1979287"},
+      {year:2016, domain:"情報行動", title:"Evaluating Whole-Session Search System Performance", authors:"Kanoulas et al.", why:"セッション全体で検索を評価。", implication:"AI Modeの会話探索評価に転用できる。", url:"https://doi.org/10.1145/2911451.2914682"},
+      {year:2016, domain:"情報行動", title:"Methods for Evaluating Interactive Information Retrieval Systems with Users", authors:"Kelly", why:"ユーザー評価方法の定番。", implication:"AIO観測にも人手評価プロトコルが必要。", url:"https://doi.org/10.1561/1500000012"},
+      {year:2016, domain:"情報行動", title:"The Power of Context: Exploring Whole-Session Relevance", authors:"Hassan Awadallah et al.", why:"セッション文脈と関連性の関係。", implication:"1クエリではなく前後文脈がAI回答を変える。", url:"https://doi.org/10.1145/2911451.2914684"},
+      {year:2016, domain:"QA/RAG", title:"SQuAD: 100,000+ Questions for Machine Comprehension of Text", authors:"Rajpurkar et al.", why:"抽出型QA評価を普及。", implication:"回答生成前の読解品質を理解する。", url:"https://arxiv.org/abs/1606.05250"},
+      {year:2017, domain:"QA/RAG", title:"TriviaQA: A Large Scale Distantly Supervised Challenge Dataset for Reading Comprehension", authors:"Joshi et al.", why:"オープンQA評価の重要データセット。", implication:"検索+読解の難しさを掴む。", url:"https://arxiv.org/abs/1705.03551"},
+      {year:2017, domain:"QA/RAG", title:"Reading Wikipedia to Answer Open-Domain Questions", authors:"Chen et al.", why:"DrQAで検索+読解の標準構成。", implication:"RAGの前史として必読。", url:"https://arxiv.org/abs/1704.00051"},
+      {year:2018, domain:"QA/RAG", title:"HotpotQA: A Dataset for Diverse, Explainable Multi-hop Question Answering", authors:"Yang et al.", why:"複数根拠を渡るQA。", implication:"AIOは複数ソース統合の失敗を起こしやすい。", url:"https://arxiv.org/abs/1809.09600"},
+      {year:2018, domain:"QA/RAG", title:"FEVER: a Large-scale Dataset for Fact Extraction and VERification", authors:"Thorne et al.", why:"主張検証データセット。", implication:"AI回答の原子主張監査に直結する。", url:"https://arxiv.org/abs/1803.05355"},
+      {year:2019, domain:"QA/RAG", title:"Natural Questions: A Benchmark for Question Answering Research", authors:"Kwiatkowski et al.", why:"実検索クエリ由来のQA。", implication:"人間の自然質問に耐える根拠設計を学ぶ。", url:"https://doi.org/10.1162/tacl_a_00276"},
+      {year:2019, domain:"QA/RAG", title:"Language Models as Knowledge Bases?", authors:"Petroni et al.", why:"LMの内部知識評価。", implication:"RAGが必要な理由、内部知識の限界を理解する。", url:"https://arxiv.org/abs/1909.01066"},
+      {year:2020, domain:"QA/RAG", title:"REALM: Retrieval-Augmented Language Model Pre-Training", authors:"Guu et al.", why:"検索器を事前学習に組み込む。", implication:"検索と生成の一体化を理解する転換点。", url:"https://arxiv.org/abs/2002.08909"},
+      {year:2020, domain:"QA/RAG", title:"Retrieval-Augmented Generation for Knowledge-Intensive NLP Tasks", authors:"Lewis et al.", why:"RAGという実務語彙の起点。", implication:"AIOはRAG的構成として理解できる。", url:"https://arxiv.org/abs/2005.11401"},
+      {year:2020, domain:"QA/RAG", title:"Leveraging Passage Retrieval with Generative Models for Open Domain Question Answering", authors:"Izacard & Grave", why:"Fusion-in-Decoderで複数文書を生成に統合。", implication:"複数出典からの合成回答の基本形。", url:"https://arxiv.org/abs/2007.01282"},
+      {year:2021, domain:"QA/RAG", title:"WebGPT: Browser-assisted Question-answering with Human Feedback", authors:"Nakano et al.", why:"LLMが検索・閲覧・引用を行う代表。", implication:"人間の調査行動を模したAI検索の原型。", url:"https://arxiv.org/abs/2112.09332"},
+      {year:2021, domain:"QA/RAG", title:"TruthfulQA: Measuring How Models Mimic Human Falsehoods", authors:"Lin et al.", why:"真実性評価の重要ベンチマーク。", implication:"もっともらしい回答と正しい回答を分ける。", url:"https://arxiv.org/abs/2109.07958"},
+      {year:2022, domain:"QA/RAG", title:"Improving Language Models by Retrieving from Trillions of Tokens", authors:"Borgeaud et al.", why:"RETROで大規模検索拡張LMを示す。", implication:"外部記憶と生成の産業スケールを理解する。", url:"https://arxiv.org/abs/2112.04426"},
+      {year:2022, domain:"QA/RAG", title:"Teaching Language Models to Support Answers with Verified Quotes", authors:"Menick et al.", why:"引用付き回答の学習。", implication:"引用は装飾でなく検証可能性のUI。", url:"https://arxiv.org/abs/2203.11147"},
+      {year:2022, domain:"QA/RAG", title:"Measuring and Narrowing the Compositionality Gap in Language Models", authors:"Press et al.", why:"Self-Ask with Searchの基盤。", implication:"複合質問をサブ質問に分解する発想を学ぶ。", url:"https://arxiv.org/abs/2210.03350"},
+      {year:2022, domain:"QA/RAG", title:"Interleaving Retrieval with Chain-of-Thought Reasoning for Knowledge-Intensive Multi-Step Questions", authors:"Trivedi et al.", why:"IRCoTで推論と検索を交互に行う。", implication:"Agentic searchで検索タイミングを制御する。", url:"https://arxiv.org/abs/2212.10509"},
+      {year:2022, domain:"QA/RAG", title:"ReAct: Synergizing Reasoning and Acting in Language Models", authors:"Yao et al.", why:"推論とツール使用を統合。", implication:"AI検索は検索行動を伴うエージェントとして見る。", url:"https://arxiv.org/abs/2210.03629"},
+      {year:2023, domain:"QA/RAG", title:"Precise Zero-Shot Dense Retrieval without Relevance Labels", authors:"Gao et al.", why:"HyDEで仮想文書により検索を強化。", implication:"質問を回答候補に変換して検索する発想がAIOにも近い。", url:"https://arxiv.org/abs/2212.10496"},
+      {year:2023, domain:"QA/RAG", title:"REPLUG: Retrieval-Augmented Black-Box Language Models", authors:"Shi et al.", why:"ブラックボックスLLMに検索を外付け。", implication:"商用LLM検索を外部から観測する考え方。", url:"https://arxiv.org/abs/2301.12652"},
+      {year:2023, domain:"QA/RAG", title:"FLARE: Forward-Looking Active Retrieval Augmented Generation", authors:"Jiang et al.", why:"生成途中で必要情報を予測して検索。", implication:"AI回答の途中検索と根拠不足検出を理解する。", url:"https://arxiv.org/abs/2305.06983"},
+      {year:2023, domain:"QA/RAG", title:"SelfCheckGPT: Zero-Resource Black-Box Hallucination Detection", authors:"Manakul et al.", why:"自己サンプリングで幻覚を検出。", implication:"AIO回答の揺れを監査する発想。", url:"https://arxiv.org/abs/2303.08896"},
+      {year:2023, domain:"QA/RAG", title:"FActScore: Fine-grained Atomic Evaluation of Factual Precision in Long Form Text Generation", authors:"Min et al.", why:"長文回答を原子事実で評価。", implication:"AIO回答監査は主張単位に分解する。", url:"https://arxiv.org/abs/2305.14251"},
+      {year:2023, domain:"QA/RAG", title:"Lost in the Middle: How Language Models Use Long Contexts", authors:"Liu et al.", why:"長文脈で中央情報を落とす問題。", implication:"重要根拠はページ内で埋もれさせない。", url:"https://arxiv.org/abs/2307.03172"},
+      {year:2023, domain:"QA/RAG", title:"FreshLLMs: Refreshing Large Language Models with Search Engine Augmentation", authors:"Vu et al.", why:"鮮度を検索で補う研究。", implication:"更新日と最新データの扱いがAIOで重要。", url:"https://arxiv.org/abs/2310.03214"},
+      {year:2023, domain:"QA/RAG", title:"RAGAS: Automated Evaluation of Retrieval Augmented Generation", authors:"Es et al.", why:"RAGの回答/文脈/忠実性評価。", implication:"自社RAGと外部AI検索監査の指標をつなぐ。", url:"https://arxiv.org/abs/2309.15217"},
+      {year:2023, domain:"QA/RAG", title:"Self-RAG: Learning to Retrieve, Generate, and Critique through Self-Reflection", authors:"Asai et al.", why:"検索・生成・批評を自己反省で制御。", implication:"引用候補を使うか捨てるかの判断を理解する。", url:"https://arxiv.org/abs/2310.11511"},
+      {year:2024, domain:"QA/RAG", title:"Retrieval-Augmented Generation for Large Language Models: A Survey", authors:"Gao et al.", why:"RAG研究の広い整理。", implication:"全体像の復習と最新論点の入口。", url:"https://arxiv.org/abs/2312.10997"},
+      {year:2024, domain:"QA/RAG", title:"A Survey on Hallucination in Large Language Models", authors:"Huang et al.", why:"幻覚の原因・検出・緩和を整理。", implication:"AIOの信頼性設計に必須。", url:"https://arxiv.org/abs/2311.05232"},
+      {year:2024, domain:"QA/RAG", title:"Corrective Retrieval Augmented Generation", authors:"Yan et al.", why:"取得文書の誤りを補正するRAG。", implication:"AI検索が低品質ソースを拾った時の危険を理解する。", url:"https://arxiv.org/abs/2401.15884"},
+      {year:2024, domain:"QA/RAG", title:"Trustworthiness in Retrieval-Augmented Generation Systems: A Survey", authors:"Huang et al.", why:"RAGの信頼性を体系化。", implication:"AIOの安全・公平・透明性評価に使う。", url:"https://arxiv.org/abs/2409.10102"},
+      {year:2024, domain:"QA/RAG", title:"Searching for Best Practices in Retrieval-Augmented Generation", authors:"Wang et al.", why:"RAG実装の実験的ベストプラクティス。", implication:"コンテンツ断片化、chunk、rerankの感覚を掴む。", url:"https://arxiv.org/abs/2407.01219"},
+      {year:2024, domain:"QA/RAG", title:"LongRAG: Enhancing Retrieval-Augmented Generation with Long-context LLMs", authors:"Jiang et al.", why:"長文脈LLM時代のRAG設計。", implication:"ページ単位/長文資料が再評価される可能性。", url:"https://arxiv.org/abs/2406.15319"},
+      {year:2022, domain:"エージェント", title:"MRKL Systems: A Modular, Neuro-Symbolic Architecture", authors:"Karpas et al.", why:"LLM+ツールのモジュール化。", implication:"AI検索を検索器、計算器、DBの統合として見る。", url:"https://arxiv.org/abs/2205.00445"},
+      {year:2022, domain:"エージェント", title:"WebShop: Towards Scalable Real-World Web Interaction with Grounded Language Agents", authors:"Yao et al.", why:"購買行動をWebエージェントで評価。", implication:"EC/商品AIOでエージェントがどう選ぶかを考える。", url:"https://arxiv.org/abs/2207.01206"},
+      {year:2023, domain:"エージェント", title:"Toolformer: Language Models Can Teach Themselves to Use Tools", authors:"Schick et al.", why:"ツール使用を自己教師で学ぶ。", implication:"検索をいつ呼ぶかがモデル能力の一部になる。", url:"https://arxiv.org/abs/2302.04761"},
+      {year:2023, domain:"エージェント", title:"ART: Automatic Multi-Step Reasoning and Tool-use for Large Language Models", authors:"Paranjape et al.", why:"タスクに応じたツール使用を自動化。", implication:"AIO観測も手順化すればエージェント化できる。", url:"https://arxiv.org/abs/2303.09014"},
+      {year:2023, domain:"エージェント", title:"HuggingGPT: Solving AI Tasks with ChatGPT and its Friends in Hugging Face", authors:"Shen et al.", why:"LLMをタスクルーターにする。", implication:"回答エンジンは検索以外のツールも組み合わせる。", url:"https://arxiv.org/abs/2303.17580"},
+      {year:2023, domain:"エージェント", title:"Gorilla: Large Language Model Connected with Massive APIs", authors:"Patil et al.", why:"API呼び出し能力を評価。", implication:"AI検索が価格/在庫/予約APIに接続する未来を読む。", url:"https://arxiv.org/abs/2305.15334"},
+      {year:2023, domain:"エージェント", title:"Voyager: An Open-Ended Embodied Agent with Large Language Models", authors:"Wang et al.", why:"長期記憶とスキル獲得を持つエージェント。", implication:"AIOは単発回答から継続タスク支援へ移る。", url:"https://arxiv.org/abs/2305.16291"},
+      {year:2023, domain:"エージェント", title:"Mind2Web: Towards a Generalist Agent for the Web", authors:"Deng et al.", why:"実Web操作エージェントのベンチマーク。", implication:"ページ構造は人だけでなくエージェントにも読まれる。", url:"https://arxiv.org/abs/2306.06070"},
+      {year:2023, domain:"エージェント", title:"WebArena: A Realistic Web Environment for Building Autonomous Agents", authors:"Zhou et al.", why:"実Webに近いエージェント評価環境。", implication:"サイトの機械操作性もAIO時代の資産。", url:"https://arxiv.org/abs/2307.13854"},
+      {year:2023, domain:"エージェント", title:"ToolLLM: Facilitating Large Language Models to Master 16000+ Real-world APIs", authors:"Qin et al.", why:"大量APIツール利用の研究。", implication:"検索回答と実行アクションの境界が薄くなる。", url:"https://arxiv.org/abs/2307.16789"},
+      {year:2023, domain:"エージェント", title:"AgentBench: Evaluating LLMs as Agents", authors:"Liu et al.", why:"LLMエージェント評価の代表。", implication:"AI検索も回答だけでなく行動結果で測る。", url:"https://arxiv.org/abs/2308.03688"},
+      {year:2024, domain:"エージェント", title:"WebLINX: Real-World Website Navigation with Multi-Turn Dialogue", authors:"Lù et al.", why:"会話+Web操作の評価。", implication:"AI検索UIが会話と操作を統合する流れを理解する。", url:"https://arxiv.org/abs/2402.05930"},
+      {year:2024, domain:"エージェント", title:"OSWorld: Benchmarking Multimodal Agents for Open-Ended Tasks in Real Computer Environments", authors:"Xie et al.", why:"PC環境でのマルチモーダルエージェント評価。", implication:"検索結果だけでなく画面操作まで含むUXを考える。", url:"https://arxiv.org/abs/2404.07972"},
+      {year:2024, domain:"エージェント", title:"SWE-agent: Agent-Computer Interfaces Enable Automated Software Engineering", authors:"Yang et al.", why:"エージェントと環境インターフェースの設計。", implication:"AIO観測エージェントを作る時の設計原則になる。", url:"https://arxiv.org/abs/2405.15793"},
+      {year:2024, domain:"AIO/GEO", title:"GEO: Generative Engine Optimization", authors:"Aggarwal et al.", why:"GEOを研究問題として定義。", implication:"AIOを黒箱最適化と可視性指標で扱う起点。", url:"https://arxiv.org/abs/2311.09735"},
+      {year:2025, domain:"AIO/GEO", title:"AI Answer Engine Citation Behavior: An Empirical Analysis of the GEO16 Framework", authors:"Kumar & Palkhouski", why:"AI回答エンジンの引用傾向を実測。", implication:"引用率、引用密度、URL監査をKPI化する。", url:"https://arxiv.org/abs/2509.10762"},
+      {year:2026, domain:"AIO/GEO", title:"Impact of AI Search Summaries on Website Traffic: Evidence from Google AI Overviews and Wikipedia", authors:"Khosravi & Yoganarasimhan", why:"AIOがWikipediaトラフィックを減らす因果推定。", implication:"ゼロクリック化を前提に指名検索と引用面を追う。", url:"https://arxiv.org/abs/2602.18455"},
+      {year:2026, domain:"AIO/GEO", title:"How Generative AI Disrupts Search: An Empirical Study of Google Search, Gemini, and AI Overviews", authors:"Grossman et al.", why:"通常検索、Gemini、AIOの差を大規模比較。", implication:"Google上位とAIO引用は同一ではない。", url:"https://arxiv.org/abs/2604.27790"},
+      {year:2026, domain:"AIO/GEO", title:"Measuring Google AI Overviews: Activation, Source Quality, Claim Fidelity, and Publisher Impact", authors:"Xu, Iqbal & Montgomery", why:"AIO発火率、品質、忠実性、出版社影響を測定。", implication:"AIO監査は発火率と主張忠実性を同時に見る。", url:"https://arxiv.org/abs/2605.14021"},
+      {year:2023, domain:"AIO/GEO", title:"Large Language Models for Information Retrieval: A Survey", authors:"Zhu et al.", why:"LLMとIRの接続を広く整理。", implication:"検索と生成を別々でなく統合技術として学ぶ。", url:"https://arxiv.org/abs/2308.07107"},
+      {year:2024, domain:"AIO/GEO", title:"The Information Retrieval Experiment Platform in the Generative AI Era", authors:"Craswell et al.", why:"生成AI時代のIR評価課題を整理。", implication:"古典IR評価だけではAI回答を測れない。", url:"https://dl.acm.org/doi/10.1145/3626772.3657953"},
+      {year:2024, domain:"AIO/GEO", title:"Generative Information Retrieval Evaluation", authors:"Mackie et al.", why:"生成型IRの評価設計を論じる。", implication:"AIOの品質はランキング順位だけで測れない。", url:"https://arxiv.org/abs/2404.08137"},
+      {year:2024, domain:"AIO/GEO", title:"Search Engines Post-ChatGPT: How Generative Artificial Intelligence Could Make Search Less Reliable", authors:"Memon & West", why:"生成AI統合後の検索信頼性リスクを整理。", implication:"AIOでは透明性、出典追跡、誤情報拡散を評価に入れる。", url:"https://arxiv.org/abs/2402.11707"},
+      {year:2024, domain:"AIO/GEO", title:"A Survey of Retrieval-Augmented Text Generation for Large Language Models", authors:"Huang & Huang", why:"検索拡張生成の包括的整理。", implication:"AIO実務に必要な検索生成パターンを俯瞰。", url:"https://arxiv.org/abs/2404.10981"},
+      {year:2002, domain:"ペルソナ/HCI", title:"Personas: Practice and Theory", authors:"Pruitt & Grudin", why:"ペルソナ手法の古典。", implication:"ペルソナを議論の共通言語として使う。", url:"https://www.microsoft.com/en-us/research/publication/personas-practice-and-theory/"},
+      {year:2003, domain:"ペルソナ/HCI", title:"Personas, Participatory Design and Product Development", authors:"Grudin & Pruitt", why:"ペルソナを組織的意思決定に使う。", implication:"AIO施策の対象ユーザーを組織で共有する。", url:"https://www.e-education.psu.edu/geog583/sites/www.e-education.psu.edu.geog583/files/grudin-pruitt.pdf"},
+      {year:2006, domain:"ペルソナ/HCI", title:"The Personas' New Clothes", authors:"Chapman & Milham", why:"ペルソナ手法への方法論的批判。", implication:"AI生成ペルソナを過信しないための必読。", url:"https://doi.org/10.1177/154193120605000503"},
+      {year:2008, domain:"ペルソナ/HCI", title:"Quantitative Evaluation of Personas as Information", authors:"Chapman et al.", why:"ペルソナの情報価値を定量評価。", implication:"ペルソナは仮説として検証し続ける。", url:"https://doi.org/10.1177/154193120805201602"},
+      {year:2011, domain:"ペルソナ/HCI", title:"Personas and User-Centered Design: How Can Personas Benefit Product Design Processes?", authors:"Miaskiewicz & Kozar", why:"ペルソナの利点を整理。", implication:"AIOで誰の意思決定を支えるかを明確化。", url:"https://doi.org/10.1016/j.destud.2011.03.003"},
+      {year:2012, domain:"ペルソナ/HCI", title:"How Do Designers and User Experience Professionals Actually Perceive and Use Personas?", authors:"Matthews et al.", why:"実務者のペルソナ利用を調査。", implication:"使われないペルソナではAIO設計に落ちない。", url:"https://doi.org/10.1145/2207676.2208573"},
+      {year:2004, domain:"ペルソナ/HCI", title:"Personas is Not Applicable", authors:"Rönkkö et al.", why:"ペルソナが効かない条件を参加型設計の観点から批判。", implication:"全人類ペルソナは政治性や実ユーザー参加の欠落を隠しうる。", url:"https://doi.org/10.1145/1011870.1011884"},
+      {year:2018, domain:"ペルソナ/HCI", title:"Persona Perception Scale: Development and Exploratory Validation", authors:"Salminen et al.", why:"ペルソナの受容を測る尺度。", implication:"社内で信じられるAIOペルソナを作る。", url:"https://doi.org/10.1145/3173574.3173890"},
+      {year:2020, domain:"ペルソナ/HCI", title:"Data-Driven Personas: A Systematic Literature Review", authors:"Salminen et al.", why:"データ駆動ペルソナの整理。", implication:"検索ログ、CRM、AI回答観測をペルソナに接続する。", url:"https://doi.org/10.1007/s10606-020-09378-0"},
+      {year:2025, domain:"ペルソナ/HCI", title:"AI as Synthetic Users in Human-Centred Design: A Systematic Review", authors:"Franjo Pehar", why:"LLM合成ユーザー研究を整理。", implication:"AIペルソナは代替でなく仮説生成に使う。", url:"https://docs.mipro-proceedings.com/hci/08_16881_hci.pdf"},
+      {year:2025, domain:"ペルソナ/HCI", title:"The Use of Large Language Models in HCI: A Critical Analysis of Synthetic Users", authors:"Salminen, Amin, Jung & Jansen", why:"合成ユーザー利用への批判的分析。", implication:"人間調査を省略するAIO設計は危険。", url:"https://doi.org/10.1145/3745900.3746108"},
+      {year:2025, domain:"ペルソナ/HCI", title:"Understanding the LLM-ification of CHI", authors:"Pang et al.", why:"HCI研究におけるLLM利用を体系レビュー。", implication:"AIを調査対象・調査道具・評価者として分ける。", url:"https://arxiv.org/abs/2501.12557"},
+      {year:2025, domain:"ペルソナ/HCI", title:"User Simulation in the Era of Generative AI: User Modeling, Synthetic Data Generation, and System Evaluation", authors:"Balog & Zhai", why:"生成AI時代のユーザーシミュレーションを基礎から統合。", implication:"AIペルソナを評価用エージェントとして扱う際の倫理と妥当性を学ぶ。", url:"https://arxiv.org/abs/2501.04410"},
+      {year:1989, domain:"意思決定", title:"Perceived Usefulness, Perceived Ease of Use, and User Acceptance of Information Technology", authors:"Davis", why:"TAMの基礎。", implication:"AI検索採用は便利さと有用性で決まる。", url:"https://doi.org/10.2307/249008"},
+      {year:1991, domain:"意思決定", title:"The Theory of Planned Behavior", authors:"Ajzen", why:"意図と行動の古典理論。", implication:"検索回答が行動意図にどう作用するかを考える。", url:"https://doi.org/10.1016/0749-5978(91)90020-T"},
+      {year:1974, domain:"意思決定", title:"Judgment under Uncertainty: Heuristics and Biases", authors:"Tversky & Kahneman", why:"認知バイアス研究の古典。", implication:"AI回答は人間のショートカットを強めうる。", url:"https://doi.org/10.1126/science.185.4157.1124"},
+      {year:1979, domain:"意思決定", title:"Prospect Theory: An Analysis of Decision under Risk", authors:"Kahneman & Tversky", why:"損失回避とリスク判断。", implication:"ペルソナの不安と証拠要求を設計する。", url:"https://doi.org/10.2307/1914185"},
+      {year:1988, domain:"意思決定", title:"Cognitive Load During Problem Solving", authors:"Sweller", why:"認知負荷理論の起点。", implication:"AI回答は情報量ではなく処理負荷で評価する。", url:"https://doi.org/10.1016/0364-0213(88)90023-7"},
+      {year:2004, domain:"信頼/評価", title:"Trust in Automation: Designing for Appropriate Reliance", authors:"Lee & See", why:"自動化信頼の古典。", implication:"AI検索には過信でも不信でもない校正が必要。", url:"https://doi.org/10.1518/hfes.46.1.50_30392"},
+      {year:1997, domain:"信頼/評価", title:"Humans and Automation: Use, Misuse, Disuse, Abuse", authors:"Parasuraman & Riley", why:"自動化利用の失敗類型。", implication:"AI検索の誤用・過信・不使用を設計で抑える。", url:"https://doi.org/10.1518/001872097778543886"},
+      {year:2011, domain:"信頼/評価", title:"A Meta-Analysis of Factors Affecting Trust in Human-Robot Interaction", authors:"Hancock et al.", why:"信頼要因のメタ分析。", implication:"AI回答の外観、能力、透明性が信頼を左右する。", url:"https://doi.org/10.1177/0018720811417254"},
+      {year:2015, domain:"信頼/評価", title:"Trust in Automation: Integrating Empirical Evidence on Factors that Influence Trust", authors:"Hoff & Bashir", why:"信頼形成を多要因で統合。", implication:"AIO施策は信頼シグナルを分解して設計する。", url:"https://doi.org/10.1177/0018720814547570"},
+      {year:2019, domain:"信頼/評価", title:"Guidelines for Human-AI Interaction", authors:"Amershi et al.", why:"人間AI相互作用の設計指針。", implication:"AI検索結果の使われ方をUXとして考える。", url:"https://doi.org/10.1145/3290605.3300233"},
+      {year:2020, domain:"信頼/評価", title:"Questioning the AI: Informing Design Practices for Explainable AI User Experiences", authors:"Liao et al.", why:"ユーザーがAIに求める説明を整理。", implication:"引用・理由・限界を回答面でどう見せるかを考える。", url:"https://doi.org/10.1145/3313831.3376590"},
+      {year:2020, domain:"信頼/評価", title:"Climbing towards NLU: On Meaning, Form, and Understanding in the Age of Data", authors:"Bender & Koller", why:"言語理解への批判的視点。", implication:"LLM回答の流暢さと理解を区別する。", url:"https://doi.org/10.18653/v1/2020.acl-main.463"},
+      {year:2021, domain:"信頼/評価", title:"On the Dangers of Stochastic Parrots", authors:"Bender et al.", why:"大規模言語モデルの社会的リスク。", implication:"AIOで偏り、出典不可視性、権力集中を扱う。", url:"https://doi.org/10.1145/3442188.3445922"},
+      {year:2021, domain:"信頼/評価", title:"On the Opportunities and Risks of Foundation Models", authors:"Bommasani et al.", why:"基盤モデルの包括レポート。", implication:"LLM検索を社会技術システムとして見る。", url:"https://arxiv.org/abs/2108.07258"},
+      {year:2023, domain:"LLMペルソナ", title:"Out of One, Many: Using Language Models to Simulate Human Samples", authors:"Argyle et al.", why:"LLMで人口集団を模擬する研究。", implication:"AIペルソナの可能性とバイアスを同時に見る。", url:"https://arxiv.org/abs/2209.06899"},
+      {year:2023, domain:"LLMペルソナ", title:"Using Large Language Models to Simulate Multiple Humans and Replicate Human Subject Studies", authors:"Aher, Arriaga & Kalai", why:"Turing Experimentで人間研究の再現を試みる。", implication:"合成ペルソナは歪み検出込みで使う。", url:"https://proceedings.mlr.press/v202/aher23a.html"},
+      {year:2023, domain:"LLMペルソナ", title:"Large Language Models as Simulated Economic Agents", authors:"Horton", why:"LLMを経済主体として扱う。", implication:"購入/比較クエリの疑似実験に使えるが限界を明記する。", url:"https://arxiv.org/abs/2301.07543"},
+      {year:2023, domain:"LLMペルソナ", title:"Can AI Language Models Replace Human Participants?", authors:"Dillion et al.", why:"心理学参加者代替の是非を論じる。", implication:"人間調査の代替ではなく補助に限定する。", url:"https://doi.org/10.1016/j.tics.2023.04.008"},
+      {year:2023, domain:"LLMペルソナ", title:"Generative Agents: Interactive Simulacra of Human Behavior", authors:"Park et al.", why:"記憶・反省・計画を持つ人間行動シミュレーション。", implication:"ペルソナを静的属性から動的行動モデルへ進める。", url:"https://arxiv.org/abs/2304.03442"},
+      {year:2025, domain:"LLMペルソナ", title:"LLM Generated Persona is a Promise with a Catch", authors:"Li, Chen, Namkoong & Peng", why:"LLM生成ペルソナの大規模バイアスを実験で示す。", implication:"合成ペルソナは代表性と予測ずれを監査して使う。", url:"https://arxiv.org/abs/2503.16527"},
+      {year:2026, domain:"LLMペルソナ", title:"Generative Agent-Based Modeling for Social Simulations: A Systematic Mapping Study", authors:"Orlando, La Gatta & Moscato", why:"生成エージェント社会シミュレーションの体系化。", implication:"全人類ペルソナは個人、集団、社会の三層で扱う。", url:"https://papers.ssrn.com/sol3/papers.cfm?abstract_id=6459740"}
+    ];
+
+    const engines = [
+      {name:"Google AI Overviews / AI Mode", tags:["SERP統合","query fan-out","発火率監査"], body:"通常SERP上のAI Overviewと会話型AI Modeが分岐。複数サブクエリを走らせる設計が示されており、通常検索上位と引用URLが一致するとは限らない。"},
+      {name:"ChatGPT Search", tags:["クエリ書き換え","Sources","ローカル/商品"], body:"質問を検索クエリに書き換え、必要に応じて追加検索。インライン引用やSourcesパネル、地図、予約、ショッピングUIに拡張。"},
+      {name:"Perplexity", tags:["answer engine","引用密度","一次情報率"], body:"回答と引用を主画面に置くネイティブ回答エンジン。引用密度、同一クエリ反復の安定性、専門ソース比率を観測する。"},
+      {name:"Microsoft Copilot / Bing", tags:["Bing連携","文単位リンク","探索カード"], body:"Copilot Searchは要約回答、引用ソース、関連リンク、追加質問を統合。Bing順位との重なりと差分を測る。"},
+      {name:"Claude web/search", tags:["調査補助","常時引用","段階検索"], body:"長文調査で検索を段階的に使う。検索回数、引用ごとの主張支持率、長文での根拠ずれを観察する。"},
+      {name:"Brave / You.com / Genspark / Phind", tags:["独立index","Research API","技術検索"], body:"独自index、研究API、Sparkpage、開発者向け回答など用途別に強みが違う。単一エンジンの結果でAIO一般論を作らない。"}
+    ];
+
+    const personas = [
+      {name:"不安解消型", need:"失敗回避、リスク、保証、返金、法的/医療的な安全性を先に確認したい。", evidence:"公式情報、第三者レビュー、制約、デメリット、更新日。"},
+      {name:"比較購買型", need:"複数候補を条件で比較し、最終選択の理由を欲しがる。", evidence:"比較表、価格、対象者、導入条件、代替案。"},
+      {name:"専門検証型", need:"主張の根拠、データ、方法、限界を確認してから判断する。", evidence:"論文、一次データ、手法、測定条件、引用可能な図表。"},
+      {name:"即時実行型", need:"今すぐ手順を知り、迷わず実行したい。", evidence:"手順、チェックリスト、必要物、所要時間、例外処理。"}
+    ];
+
+    const books = [
+      {title:"Introduction to Information Retrieval", authors:"Manning, Raghavan & Schutze", why:"IRの数式と評価指標の背骨。BM25、リンク分析、分類、評価を固める。", url:"https://nlp.stanford.edu/IR-book/"},
+      {title:"Search User Interfaces", authors:"Marti Hearst", why:"検索UXを体系的に学べる。AI検索UIを評価する前提になる。", url:"https://searchuserinterfaces.com/"},
+      {title:"The Turn", authors:"Peter Ingwersen & Kalervo Jarvelin", why:"文脈内情報検索の古典。検索を人間・課題・環境で捉える。", url:"https://link.springer.com/book/10.1007/1-4020-3851-8"},
+      {title:"The Persona Lifecycle", authors:"Pruitt & Adlin", why:"ペルソナを作って終わりにしない運用本。AIOペルソナ更新に使える。", url:"https://www.oreilly.com/library/view/the-persona-lifecycle/9780125662512/"},
+      {title:"Contextual Design", authors:"Beyer & Holtzblatt", why:"実ユーザー観察から設計へ落とす方法。AI生成ペルソナの過信を抑える。", url:"https://www.sciencedirect.com/book/9780128008942/contextual-design"},
+      {title:"Thinking, Fast and Slow", authors:"Daniel Kahneman", why:"人間の判断バイアスを学ぶ。AI回答の受け取られ方を考える土台。", url:"https://us.macmillan.com/books/9780374533557/thinkingfastandslow/"},
+      {title:"Information Foraging Theory", authors:"Pirolli", why:"人が情報の匂いを追うモデル。ゼロクリック時代の導線設計に効く。", url:"https://global.oup.com/academic/product/information-foraging-theory-9780195387797"},
+      {title:"Speech and Language Processing", authors:"Jurafsky & Martin", why:"NLP/LLMの基礎。生成、意味、評価、QAを補強する。", url:"https://web.stanford.edu/~jurafsky/slp3/"},
+      {title:"Designing Machine Learning Systems", authors:"Chip Huyen", why:"MLシステムのデータ、評価、運用を学ぶ。AIO観測基盤にも転用可能。", url:"https://www.oreilly.com/library/view/designing-machine-learning/9781098107956/"}
+    ];
+
+    const sources = [
+      {name:"OpenAI: ChatGPT Search", body:"検索時のクエリ書き換え、検索パートナー、引用/Sources、ローカル・予約・ショッピングの扱い。", url:"https://help.openai.com/en/articles/9237897-chatgpt-search"},
+      {name:"Google: AI Overviews", body:"AI Overviewsの位置づけ、リンク付きスナップショット、AI Modeへの導線。", url:"https://www.search.google/ways-to-search/ai-overviews/"},
+      {name:"Microsoft: Copilot Search", body:"Bing上のAI-powered search and answer engine、引用ソース、リンク表示。", url:"https://www.microsoft.com/en-us/bing/copilot-search"},
+      {name:"GEO: Generative Engine Optimization", body:"生成エンジンにおける可視性最適化の研究起点。", url:"https://arxiv.org/abs/2311.09735"},
+      {name:"Measuring Google AI Overviews", body:"2026年のAIO発火率、ソース品質、主張忠実性、出版社影響の大規模測定。", url:"https://arxiv.org/abs/2605.14021"},
+      {name:"Impact of AI Search Summaries", body:"AIOがWikipediaトラフィックに与える影響を因果推定。", url:"https://arxiv.org/abs/2602.18455"}
+    ];
+
+    const quiz = [
+      {q:"AIOで最も危険な誤解はどれですか。", type:"single", options:["Google上位なら必ずAI回答に引用される","一次情報は重要である","同一クエリを反復観測すべきである","引用の主張支持率を見るべきである"], answer:[0], chapter:"engines", explain:"AI回答はquery fan-outや独自候補選択を行うため、通常順位と引用は一致しません。"},
+      {q:"RAGの基本構成として正しいものを選んでください。", type:"single", options:["検索せず内部知識だけで答える","検索/取得した外部文脈を使って生成する","広告順位をそのまま回答にする","人間が毎回手作業で引用を付ける"], answer:[1], chapter:"mechanics", explain:"RAGは外部文脈を検索し、生成モデルに条件として渡す構成です。"},
+      {q:"Google AIO、ChatGPT Search、Perplexityを同じ商用クエリで比較します。引用率の差を説明するため、最低限固定すべき条件をすべて選んでください。", type:"multi", options:["日時と反復回数","ログイン状態と検索履歴","国/言語/位置情報","同一の原子主張への分解","ページ制作者の希望順位"], answer:[0,1,2,3], chapter:"engines", explain:"観測条件と評価粒度を固定しないと、エンジン差と環境差を切り分けられません。"},
+      {q:"ペルソナをAIOに使う時、最も重要な切り口はどれですか。", type:"single", options:["年齢と性別だけ","証拠ニーズと意思決定不安","好きな色","SNSフォロワー数"], answer:[1], chapter:"persona", explain:"LLM検索では、何を信じる証拠とみなすかが回答面設計に直結します。"},
+      {q:"AI回答が「A社は最安」と述べ、引用先はA社公式の料金ページでした。引用監査として必要な確認をすべて選んでください。", type:"multi", options:["最安という原子主張に分解する","引用URLが料金を示すか確認する","競合比較の根拠があるか確認する","公式ページなので無条件に支持と判定する"], answer:[0,1,2], chapter:"mechanics", explain:"公式ページでも競合比較がなければ「最安」を支持できません。"},
+      {q:"Query fan-outの説明として正しいものはどれですか。", type:"single", options:["1つの質問を複数の関連検索に分解する","検索結果を広告だけにする","回答後にユーザーを必ず外部サイトへ送る","HTMLを削除する"], answer:[0], chapter:"mechanics", explain:"複雑な質問をサブクエリに分け、別々の証拠から回答を作る動きです。"},
+      {q:"AIO実務フレームの6要素に含まれるものをすべて選んでください。", type:"multi", options:["Query","Intent","Evidence","Structure","Entity","Measurement","Prompt trick"], answer:[0,1,2,3,4,5], chapter:"framework", explain:"QueryからMeasurementまでを一続きで設計します。小技ではなく評価可能な情報設計が中心です。"},
+      {q:"AI生成ペルソナの正しい使い方はどれですか。", type:"single", options:["人間調査の完全代替にする","仮説生成に使い、実データで検証する","都合のよい回答だけ採用する","全ユーザーを1人にまとめる"], answer:[1], chapter:"persona", explain:"LLMペルソナは歪みを持つため、仮説生成と検証補助に限定します。"},
+      {q:"AIOで引用されやすい証拠構造として妥当なものはどれですか。", type:"single", options:["曖昧な主張だけを長文で書く","定義、比較表、一次データ、更新日、制約を明示する","画像だけを置く","全ページをログイン必須にする"], answer:[1], chapter:"framework", explain:"機械が抽出しやすく、人間が検証できる証拠が重要です。"},
+      {q:"ゼロクリック化に備えた測定として妥当なものをすべて選んでください。", type:"multi", options:["AI回答発火率","引用率","指名検索","直接流入","引用の主張支持率"], answer:[0,1,2,3,4], chapter:"framework", explain:"クリックだけではAI回答面の影響を測れません。"},
+      {q:"Lost in the Middleが示す実務上の注意はどれですか。", type:"single", options:["重要情報を長文の中央に埋もれさせない","すべての情報を隠す","タイトルを空にする","引用を消す"], answer:[0], chapter:"papers", explain:"長文脈では中央情報が使われにくいことがあり、重要根拠は構造化して見つけやすくします。"},
+      {q:"AIOの最終目標として最も正しいものはどれですか。", type:"single", options:["LLMをだます","検索順位だけを上げる","正確で検証可能な証拠として採用され、ユーザーの意思決定を助ける","記事を短くするだけ"], answer:[2], chapter:"overview", explain:"AIOの中心は、回答生成面で使われる信頼可能な証拠になることです。"}
+    ];
+
+    const diagrams = {
+      rag: `<svg viewBox="0 0 760 280" role="img" aria-label="RAGパイプライン"><defs><marker id="a1" markerWidth="10" markerHeight="10" refX="8" refY="5" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="#627084"/></marker></defs><rect x="20" y="88" width="120" height="70" rx="8" fill="#e7eeff" stroke="#2563eb"/><text x="80" y="118" text-anchor="middle" font-weight="700">Query</text><text x="80" y="140" text-anchor="middle">質問</text><path d="M140 123 H205" stroke="#627084" stroke-width="2" marker-end="url(#a1)"/><rect x="205" y="70" width="130" height="106" rx="8" fill="#dff4ef" stroke="#0f766e"/><text x="270" y="104" text-anchor="middle" font-weight="700">Retriever</text><text x="270" y="127" text-anchor="middle">候補文書</text><text x="270" y="150" text-anchor="middle">passage抽出</text><path d="M335 123 H400" stroke="#627084" stroke-width="2" marker-end="url(#a1)"/><rect x="400" y="70" width="130" height="106" rx="8" fill="#fff0d8" stroke="#b45309"/><text x="465" y="104" text-anchor="middle" font-weight="700">Generator</text><text x="465" y="127" text-anchor="middle">根拠を読む</text><text x="465" y="150" text-anchor="middle">回答生成</text><path d="M530 123 H595" stroke="#627084" stroke-width="2" marker-end="url(#a1)"/><rect x="595" y="88" width="140" height="70" rx="8" fill="#ffe5df" stroke="#dc5b46"/><text x="665" y="118" text-anchor="middle" font-weight="700">Answer</text><text x="665" y="140" text-anchor="middle">引用付き回答</text><rect x="210" y="210" width="320" height="42" rx="8" fill="#f1f5f9" stroke="#94a3b8"/><text x="370" y="236" text-anchor="middle">AIO実務: passage単位で引用しやすい根拠を置く</text></svg>`,
+      fanout: `<svg viewBox="0 0 760 300" role="img" aria-label="Query fan-out"><defs><marker id="a2" markerWidth="10" markerHeight="10" refX="8" refY="5" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="#627084"/></marker></defs><rect x="20" y="110" width="160" height="70" rx="8" fill="#e7eeff" stroke="#2563eb"/><text x="100" y="138" text-anchor="middle" font-weight="700">大きな質問</text><text x="100" y="160" text-anchor="middle">10 questions in one</text><path d="M180 145 C230 145,230 55,280 55" stroke="#627084" stroke-width="2" fill="none" marker-end="url(#a2)"/><path d="M180 145 C230 145,230 145,280 145" stroke="#627084" stroke-width="2" fill="none" marker-end="url(#a2)"/><path d="M180 145 C230 145,230 235,280 235" stroke="#627084" stroke-width="2" fill="none" marker-end="url(#a2)"/><rect x="280" y="25" width="150" height="60" rx="8" fill="#dff4ef" stroke="#0f766e"/><text x="355" y="60" text-anchor="middle">定義検索</text><rect x="280" y="115" width="150" height="60" rx="8" fill="#fff0d8" stroke="#b45309"/><text x="355" y="150" text-anchor="middle">比較検索</text><rect x="280" y="205" width="150" height="60" rx="8" fill="#ffe5df" stroke="#dc5b46"/><text x="355" y="240" text-anchor="middle">制約検索</text><path d="M430 55 C500 55,500 145,560 145" stroke="#627084" stroke-width="2" fill="none" marker-end="url(#a2)"/><path d="M430 145 H560" stroke="#627084" stroke-width="2" marker-end="url(#a2)"/><path d="M430 235 C500 235,500 145,560 145" stroke="#627084" stroke-width="2" fill="none" marker-end="url(#a2)"/><rect x="560" y="105" width="165" height="80" rx="8" fill="#efe7ff" stroke="#6d28d9"/><text x="642" y="137" text-anchor="middle" font-weight="700">統合回答</text><text x="642" y="160" text-anchor="middle">別ソースを合成</text></svg>`,
+      citation: `<svg viewBox="0 0 760 300" role="img" aria-label="引用監査"><rect x="25" y="40" width="710" height="220" rx="8" fill="#fbfcfe" stroke="#d8dee8"/><text x="50" y="75" font-weight="700">引用監査マトリクス</text><line x1="50" y1="95" x2="710" y2="95" stroke="#d8dee8"/><line x1="250" y1="95" x2="250" y2="235" stroke="#d8dee8"/><line x1="450" y1="95" x2="450" y2="235" stroke="#d8dee8"/><text x="60" y="125" font-weight="700">原子主張</text><text x="270" y="125" font-weight="700">引用URL</text><text x="470" y="125" font-weight="700">支持度</text><text x="60" y="162">A社は予約に対応</text><text x="270" y="162">公式ページ</text><rect x="470" y="142" width="120" height="28" rx="6" fill="#e5f7eb"/><text x="530" y="162" text-anchor="middle">支持</text><text x="60" y="205">最安である</text><text x="270" y="205">比較記事</text><rect x="470" y="185" width="160" height="28" rx="6" fill="#ffe9e6"/><text x="550" y="205" text-anchor="middle">不十分/不支持</text></svg>`,
+      funnel: `<svg viewBox="0 0 760 300" role="img" aria-label="AIO可視性ファネル"><defs><marker id="a3" markerWidth="10" markerHeight="10" refX="8" refY="5" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="#627084"/></marker></defs><rect x="50" y="40" width="130" height="68" rx="8" fill="#e7eeff" stroke="#2563eb"/><text x="115" y="70" text-anchor="middle" font-weight="700">Crawl</text><text x="115" y="92" text-anchor="middle">読める</text><path d="M180 74 H230" stroke="#627084" stroke-width="2" marker-end="url(#a3)"/><rect x="230" y="40" width="130" height="68" rx="8" fill="#dff4ef" stroke="#0f766e"/><text x="295" y="70" text-anchor="middle" font-weight="700">Candidate</text><text x="295" y="92" text-anchor="middle">候補になる</text><path d="M360 74 H410" stroke="#627084" stroke-width="2" marker-end="url(#a3)"/><rect x="410" y="40" width="130" height="68" rx="8" fill="#fff0d8" stroke="#b45309"/><text x="475" y="70" text-anchor="middle" font-weight="700">Cited</text><text x="475" y="92" text-anchor="middle">引用される</text><path d="M540 74 H590" stroke="#627084" stroke-width="2" marker-end="url(#a3)"/><rect x="590" y="40" width="130" height="68" rx="8" fill="#ffe5df" stroke="#dc5b46"/><text x="655" y="70" text-anchor="middle" font-weight="700">Chosen</text><text x="655" y="92" text-anchor="middle">意思決定へ</text><rect x="90" y="180" width="580" height="60" rx="8" fill="#f1f5f9" stroke="#94a3b8"/><text x="380" y="214" text-anchor="middle" font-weight="700">測定: 発火率、引用率、主張支持率、指名検索、直接流入</text></svg>`
+    };
+
+    function safeParseStorage(key, fallback) {
+      try {
+        const raw = localStorage.getItem(key);
+        return raw ? JSON.parse(raw) : fallback;
+      } catch {
+        localStorage.removeItem(key);
+        return fallback;
+      }
+    }
+
+    const state = {
+      viewed: new Set(safeParseStorage("aio:viewed", [])),
+      answers: safeParseStorage("aio:answers", {}),
+      paperFilter: "all"
+    };
+
+    function renderEngines() {
+      document.getElementById("engineGrid").innerHTML = engines.map(engine => `
+        <article class="engine">
+          <strong>${engine.name}</strong>
+          <p>${engine.body}</p>
+          <div class="tag-row">${engine.tags.map(tag => `<span class="tag blue">${tag}</span>`).join("")}</div>
+        </article>
+      `).join("");
+    }
+
+    function renderPersonas() {
+      const grid = document.getElementById("personaGrid");
+      grid.innerHTML = personas.map((persona, index) => `
+        <button class="persona" data-persona="${index}" type="button">
+          <strong>${persona.name}</strong>
+          <span class="small">${persona.need}</span>
+        </button>
+      `).join("");
+      grid.querySelectorAll(".persona").forEach(btn => btn.addEventListener("click", () => {
+        grid.querySelectorAll(".persona").forEach(item => item.classList.remove("selected"));
+        btn.classList.add("selected");
+        updatePersonaOutput(Number(btn.dataset.persona));
+      }));
+      updatePersonaOutput(0);
+      grid.querySelector(".persona").classList.add("selected");
+      document.getElementById("personaInput").addEventListener("input", () => {
+        const selected = Number(document.querySelector(".persona.selected")?.dataset.persona || 0);
+        updatePersonaOutput(selected);
+      });
+    }
+
+    function updatePersonaOutput(index) {
+      const persona = personas[index];
+      const input = document.getElementById("personaInput").value.trim();
+      document.getElementById("personaOutput").value = [
+        `ペルソナ型: ${persona.name}`,
+        `入力仮説: ${input || "未入力"}`,
+        `検索意図: ${persona.need}`,
+        `必要な証拠: ${persona.evidence}`,
+        "AIOコンテンツ要件:",
+        "- 冒頭に結論と対象者を明記する",
+        "- 比較軸、制約、例外、更新日を表にする",
+        "- 主張ごとに一次情報または検証可能な根拠を置く",
+        "- AI回答で要約されても誤解されない短い定義文を置く"
+      ].join("\n");
+    }
+
+    function renderPapers() {
+      document.getElementById("paperCount").textContent = papers.length;
+      document.getElementById("paperProgress").textContent = papers.length;
+      const domains = ["all", ...Array.from(new Set(papers.map(p => p.domain)))];
+      document.getElementById("paperFilters").innerHTML = domains.map(domain => `
+        <button type="button" data-filter="${domain}" aria-pressed="${domain === state.paperFilter ? "true" : "false"}">${domain === "all" ? "全分野" : domain}</button>
+      `).join("");
+      document.querySelectorAll("[data-filter]").forEach(btn => btn.addEventListener("click", () => {
+        state.paperFilter = btn.dataset.filter;
+        renderPapers();
+      }));
+      const query = document.getElementById("paperSearch").value.trim().toLowerCase();
+      const filtered = papers.filter(p => {
+        const filterOk = state.paperFilter === "all" || p.domain === state.paperFilter;
+        const text = `${p.title} ${p.authors} ${p.domain} ${p.why} ${p.implication}`.toLowerCase();
+        return filterOk && (!query || text.includes(query));
+      });
+      document.getElementById("paperRows").innerHTML = filtered.map(p => `
+        <tr>
+          <td>${p.year}</td>
+          <td><span class="tag teal">${p.domain}</span></td>
+          <td><a href="${p.url}" target="_blank" rel="noopener">${p.title}</a><br><span class="small">${p.authors}</span></td>
+          <td>${p.why}</td>
+          <td>${p.implication}</td>
+        </tr>
+      `).join("");
+    }
+
+    function renderBooks() {
+      document.getElementById("bookGrid").innerHTML = books.map(book => `
+        <article class="book">
+          <strong><a href="${book.url}" target="_blank" rel="noopener">${book.title}</a></strong>
+          <span class="small">${book.authors}</span>
+          <p>${book.why}</p>
+        </article>
+      `).join("");
+    }
+
+    function renderSources() {
+      document.getElementById("sourceGrid").innerHTML = sources.map(source => `
+        <article class="source-card">
+          <strong><a href="${source.url}" target="_blank" rel="noopener">${source.name}</a></strong>
+          <p>${source.body}</p>
+        </article>
+      `).join("");
+    }
+
+    function renderDiagram(name = "rag") {
+      document.getElementById("diagramStage").innerHTML = diagrams[name];
+      document.querySelectorAll(".diagram-tab").forEach(tab => {
+        tab.setAttribute("aria-pressed", String(tab.dataset.diagram === name));
+      });
+    }
+
+    function renderQuiz() {
+      document.getElementById("quizList").innerHTML = quiz.map((item, index) => `
+        <article class="quiz-card" data-q="${index}">
+          <strong>Q${index + 1}. ${item.q}</strong>
+          <div class="quiz-options">
+            ${item.options.map((option, optionIndex) => `
+              <label>
+                <input type="${item.type === "multi" ? "checkbox" : "radio"}" name="q${index}" value="${optionIndex}">
+                <span>${option}</span>
+              </label>
+            `).join("")}
+          </div>
+          <button type="button" data-check="${index}">回答する</button>
+          <div class="feedback" id="feedback${index}"></div>
+        </article>
+      `).join("");
+      Object.entries(state.answers).forEach(([index, answer]) => {
+        const card = document.querySelector(`[data-q="${index}"]`);
+        if (!card) return;
+        answer.selected.forEach(value => {
+          const input = card.querySelector(`input[value="${value}"]`);
+          if (input) input.checked = true;
+        });
+        showFeedback(Number(index), answer.correct);
+      });
+      document.querySelectorAll("[data-check]").forEach(btn => {
+        btn.addEventListener("click", () => checkQuiz(Number(btn.dataset.check)));
+      });
+      document.getElementById("resetQuiz").onclick = () => {
+        state.answers = {};
+        localStorage.removeItem("aio:answers");
+        renderQuiz();
+        updateProgress();
+      };
+      updateQuizScore();
+    }
+
+    function selectedAnswers(index) {
+      return Array.from(document.querySelectorAll(`input[name="q${index}"]:checked`)).map(input => Number(input.value)).sort((a, b) => a - b);
+    }
+
+    function arraysEqual(a, b) {
+      return a.length === b.length && a.every((value, index) => value === b[index]);
+    }
+
+    function checkQuiz(index) {
+      const selected = selectedAnswers(index);
+      if (!selected.length) return;
+      const correct = arraysEqual(selected, [...quiz[index].answer].sort((a, b) => a - b));
+      state.answers[index] = { selected, correct };
+      localStorage.setItem("aio:answers", JSON.stringify(state.answers));
+      showFeedback(index, correct);
+      updateProgress();
+      updateQuizScore();
+    }
+
+    function showFeedback(index, correct) {
+      const feedback = document.getElementById(`feedback${index}`);
+      feedback.className = `feedback ${correct ? "correct" : "wrong"}`;
+      feedback.textContent = `${correct ? "正解。" : "不正解。"} ${quiz[index].explain} 戻る章: ${quiz[index].chapter}`;
+    }
+
+    function updateQuizScore() {
+      const answered = Object.values(state.answers);
+      const correct = answered.filter(a => a.correct).length;
+      const score = quiz.length ? Math.round((correct / quiz.length) * 100) : 0;
+      document.getElementById("quizScore").textContent = `${score}%`;
+      document.getElementById("quizProgress").textContent = `${answered.length} / ${quiz.length}`;
+      let rank = "未回答です。";
+      if (answered.length === quiz.length) {
+        if (score >= 90) rank = "実務投入可。次は自社クエリセットで観測してください。";
+        else if (score >= 75) rank = "基本理解あり。誤答章を復習してください。";
+        else if (score >= 60) rank = "復習推奨。図解と論文マップに戻ってください。";
+        else rank = "基礎から再学習。overview、mechanics、personaを戻ってください。";
+      }
+      document.getElementById("quizRank").textContent = rank;
+      document.getElementById("rankLabel").textContent = score >= 90 ? "実務投入可" : score >= 75 ? "基本理解" : score >= 60 ? "復習推奨" : "学習中";
+    }
+
+    function updateProgress() {
+      const sections = Array.from(document.querySelectorAll("main section"));
+      const completed = state.viewed.size;
+      const quizAnswered = Object.keys(state.answers).length;
+      const progress = Math.round(((completed / sections.length) * 70) + ((quizAnswered / quiz.length) * 30));
+      document.getElementById("progressMeter").style.width = `${progress}%`;
+      document.getElementById("chapterProgress").textContent = `${completed} / ${sections.length}`;
+      document.getElementById("mobileProgress").textContent = `${progress}% complete`;
+      updateQuizScore();
+    }
+
+    function setupObservers() {
+      const navLinks = Array.from(document.querySelectorAll("#chapterNav a"));
+      const observer = new IntersectionObserver(entries => {
+        entries.forEach(entry => {
+          if (!entry.isIntersecting) return;
+          const id = entry.target.id;
+          state.viewed.add(id);
+          localStorage.setItem("aio:viewed", JSON.stringify(Array.from(state.viewed)));
+          navLinks.forEach(link => link.classList.toggle("active", link.getAttribute("href") === `#${id}`));
+          updateProgress();
+        });
+      }, { rootMargin: "-20% 0px -62% 0px", threshold: 0.08 });
+      document.querySelectorAll("main section").forEach(section => observer.observe(section));
+    }
+
+    document.querySelectorAll(".diagram-tab").forEach(tab => {
+      tab.addEventListener("click", () => renderDiagram(tab.dataset.diagram));
+    });
+    document.getElementById("paperSearch").addEventListener("input", renderPapers);
+    document.getElementById("mobileChapterSelect").addEventListener("change", event => {
+      const target = document.querySelector(event.target.value);
+      if (target) target.scrollIntoView({ behavior: "smooth", block: "start" });
+    });
+
+    renderEngines();
+    renderPersonas();
+    renderPapers();
+    renderBooks();
+    renderSources();
+    renderDiagram();
+    renderQuiz();
+    setupObservers();
+    updateProgress();
+  </script>
+</body>
+</html>
