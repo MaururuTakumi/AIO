@@ -553,6 +553,173 @@
       gap: 12px;
     }
 
+    .plain-answer {
+      border: 1px solid #b9dfd8;
+      border-radius: var(--radius);
+      background: #edf9f6;
+      padding: 14px;
+      margin: 14px 0;
+    }
+
+    .plain-answer strong {
+      display: block;
+      margin-bottom: 5px;
+      color: #0f5e58;
+    }
+
+    .level-grid,
+    .example-grid,
+    .money-grid,
+    .offer-grid,
+    .kpi-grid,
+    .week-grid,
+    .work-grid,
+    .danger-grid,
+    .ladder-grid {
+      display: grid;
+      gap: 12px;
+    }
+
+    .level-grid {
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+    }
+
+    .example-grid,
+    .money-grid {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+
+    .offer-grid,
+    .kpi-grid,
+    .week-grid,
+    .work-grid,
+    .danger-grid,
+    .ladder-grid {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .level-card,
+    .example-card,
+    .money-card,
+    .offer-card,
+    .kpi-card,
+    .week-card,
+    .work-card,
+    .danger-card,
+    .ladder-card,
+    .script-card {
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      background: #fbfcfe;
+      padding: 14px;
+    }
+
+    .level-card strong,
+    .example-card strong,
+    .money-card strong,
+    .offer-card strong,
+    .kpi-card strong,
+    .week-card strong,
+    .work-card strong,
+    .danger-card strong,
+    .ladder-card strong,
+    .script-card strong {
+      display: block;
+      margin-bottom: 6px;
+    }
+
+    .work-card label {
+      display: grid;
+      gap: 6px;
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    .work-card textarea {
+      min-height: 94px;
+      background: white;
+    }
+
+    .simple-flow {
+      display: grid;
+      grid-template-columns: repeat(5, minmax(0, 1fr));
+      gap: 8px;
+      margin: 12px 0;
+    }
+
+    .flow-item {
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      background: #fff;
+      padding: 12px;
+      min-height: 118px;
+    }
+
+    .flow-item strong {
+      display: block;
+      color: var(--blue);
+      margin-bottom: 6px;
+    }
+
+    .mini-table {
+      width: 100%;
+      min-width: 0;
+      font-size: 14px;
+    }
+
+    .mini-table th {
+      position: static;
+    }
+
+    .calc {
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      background: #fbfcfe;
+      padding: 14px;
+      margin-top: 14px;
+    }
+
+    .calc-grid {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 10px;
+    }
+
+    .calc label {
+      display: grid;
+      gap: 5px;
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    .calc input {
+      width: 100%;
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      padding: 9px 10px;
+      background: white;
+      color: var(--ink);
+    }
+
+    .calc-result {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 10px;
+      margin-top: 12px;
+    }
+
+    .calc-result div {
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      background: white;
+      padding: 12px;
+    }
+
+    .calc-result strong {
+      display: block;
+      font-size: 22px;
+    }
+
     .note {
       border-left: 4px solid var(--amber);
       background: #fff8ec;
@@ -605,12 +772,24 @@
       .engine-grid,
       .persona-grid,
       .book-grid,
-      .source-grid {
+      .source-grid,
+      .level-grid,
+      .example-grid,
+      .money-grid,
+      .offer-grid,
+      .kpi-grid,
+      .week-grid,
+      .work-grid,
+      .danger-grid,
+      .ladder-grid,
+      .calc-grid,
+      .calc-result {
         grid-template-columns: repeat(2, minmax(0, 1fr));
       }
 
       .framework,
-      .process-grid {
+      .process-grid,
+      .simple-flow {
         grid-template-columns: repeat(3, minmax(0, 1fr));
       }
     }
@@ -651,8 +830,20 @@
       .persona-grid,
       .book-grid,
       .source-grid,
+      .level-grid,
+      .example-grid,
+      .money-grid,
+      .offer-grid,
+      .kpi-grid,
+      .week-grid,
+      .work-grid,
+      .danger-grid,
+      .ladder-grid,
+      .calc-grid,
+      .calc-result,
       .framework,
       .process-grid,
+      .simple-flow,
       .diagram-tabs {
         grid-template-columns: 1fr;
       }
@@ -672,14 +863,20 @@
     <strong>AIO Lab</strong>
     <select id="mobileChapterSelect" class="mobile-select" aria-label="章へ移動">
       <option value="#overview">全体像</option>
+      <option value="#plain">やさしく理解</option>
       <option value="#process">研究プロセス</option>
       <option value="#mechanics">LLM検索</option>
       <option value="#engines">検索AI比較</option>
       <option value="#persona">ペルソナ</option>
+      <option value="#work">自社ワーク</option>
       <option value="#framework">実務フレーム</option>
+      <option value="#smb">中小企業の例</option>
+      <option value="#money">お金にする</option>
       <option value="#papers">論文マップ</option>
       <option value="#books">本・講義</option>
+      <option value="#ladder">理解の階段</option>
       <option value="#quiz">テスト</option>
+      <option value="#pitfalls">NG集</option>
       <option value="#sources">出典</option>
     </select>
     <span id="mobileProgress" class="tag teal">0% complete</span>
@@ -696,14 +893,20 @@
       </div>
       <nav id="chapterNav">
         <a href="#overview">全体像</a>
+        <a href="#plain">小中高で分かる説明</a>
         <a href="#process">研究プロセス</a>
         <a href="#mechanics">LLM検索の仕組み</a>
         <a href="#engines">検索AI比較</a>
         <a href="#persona">全人類ペルソナ</a>
+        <a href="#work">自社に置き換える</a>
         <a href="#framework">AIO実務フレーム</a>
+        <a href="#smb">中小企業の具体例</a>
+        <a href="#money">お金にする設計</a>
         <a href="#papers">100本超論文マップ</a>
         <a href="#books">買う価値のある本</a>
+        <a href="#ladder">理解の階段</a>
         <a href="#quiz">理解度テスト</a>
+        <a href="#pitfalls">やってはいけないAIO</a>
         <a href="#sources">出典と次タスク</a>
       </nav>
     </aside>
@@ -713,13 +916,18 @@
         <div class="intro">
           <div>
             <div class="eyebrow">Start here</div>
-            <h1>AIOはSEOの置き換えではなく、回答生成面で「採用される証拠」になる技術です。</h1>
-            <p class="lead">この教材は、情報検索、RAG、引用評価、AI検索UI、ペルソナ/ユーザーモデリング、人間の情報探索行動を一本の体系に接続します。目的は「AIがどう検索して、どの情報を証拠として選び、どの人間の意思決定に影響するか」を実務で設計できる状態にすることです。</p>
+            <h1>AIOは「AIに選ばれる店・会社・商品」になるための情報設計です。</h1>
+            <p class="lead">むずかしく言うと、AIOは回答生成面で採用される証拠を作る技術です。やさしく言うと、ChatGPTやGoogleのAIが「この会社は説明が分かりやすい。根拠もある。お客さんに紹介できる」と判断しやすい状態を作ることです。</p>
+            <div class="plain-answer">
+              <strong>まず一言で</strong>
+              <p>AI検索時代の勝ち筋は、検索順位だけを追うことではありません。お客さんの質問に対して、AIがそのまま引用できる答え、比較表、料金、実績、注意点を自社サイトに置くことです。</p>
+            </div>
             <div class="tag-row">
               <span class="tag teal">論文 <span id="paperCount">0</span> 本</span>
               <span class="tag blue">図解 4種</span>
-              <span class="tag amber">理解度テスト 12問</span>
-              <span class="tag coral">2026-05時点のAI検索論点</span>
+              <span class="tag amber">理解度テスト 16問</span>
+              <span class="tag coral">中小企業の実例</span>
+              <span class="tag violet">収益化ロードマップ</span>
             </div>
           </div>
           <div class="diagram" aria-label="AIOの全体図">
@@ -756,10 +964,56 @@
         </div>
 
         <div class="stat-grid" aria-label="学習ゴール">
-          <div class="stat"><strong>1</strong><span>検索UIではなく、回答生成パイプラインとして見る</span></div>
-          <div class="stat"><strong>2</strong><span>ペルソナを属性ではなく、証拠ニーズで切る</span></div>
-          <div class="stat"><strong>3</strong><span>引用率、主張支持率、回答内採用率を測る</span></div>
-          <div class="stat"><strong>4</strong><span>実務では「正確性・構造・実体・更新性」を揃える</span></div>
+          <div class="stat"><strong>1</strong><span>AIが何を読んで答えるかを理解する</span></div>
+          <div class="stat"><strong>2</strong><span>お客さんの不安を質問として集める</span></div>
+          <div class="stat"><strong>3</strong><span>引用される料金表・比較表・FAQを作る</span></div>
+          <div class="stat"><strong>4</strong><span>診断、制作、月次運用として売れる形にする</span></div>
+        </div>
+      </section>
+
+      <section id="plain" data-chapter="plain">
+        <h2>小学生・中学生・高校生でも分かるAIO</h2>
+        <p>同じ話を、理解レベル別に言い換えます。お客さんに説明する時は、まず小学生版で伝えてから、相手の理解に合わせて深くします。</p>
+        <div class="level-grid">
+          <div class="level-card">
+            <strong>小学生でも分かる</strong>
+            <p>AIは、すごく速く調べものをする友だちです。でも、その友だちは本当かどうか分からないものは紹介しにくい。だから、お店は「値段」「場所」「できること」「注意すること」を分かりやすく書いておく必要があります。</p>
+          </div>
+          <div class="level-card">
+            <strong>中学生でも分かる</strong>
+            <p>AI検索は、質問をいくつかの小さい質問に分けて、複数のページを読み、答えをまとめます。自社ページが選ばれるには、AIが抜き出しやすい見出し、表、FAQ、根拠が必要です。</p>
+          </div>
+          <div class="level-card">
+            <strong>高校生でも分かる</strong>
+            <p>AIOは、検索順位だけでなく、回答生成時の「根拠候補」に入るための設計です。自然文クエリ、検索意図、証拠、構造化、実体情報、測定をセットで改善します。</p>
+          </div>
+          <div class="level-card">
+            <strong>中小企業向けに言うと</strong>
+            <p>お客さんがAIに「どこに頼むべき？」と聞いた時に、AIが自社を候補に出しやすくする仕事です。ホームページをきれいにするだけでなく、問い合わせ前の不安に答える営業資料をWeb上に置きます。</p>
+          </div>
+        </div>
+
+        <h3>たとえ話: AIは新人営業マン</h3>
+        <div class="simple-flow">
+          <div class="flow-item"><strong>質問される</strong><p class="small">「近くで夜間対応の水漏れ修理は？」</p></div>
+          <div class="flow-item"><strong>調べる</strong><p class="small">対応エリア、料金、営業時間、口コミを探す。</p></div>
+          <div class="flow-item"><strong>比べる</strong><p class="small">A社は料金明確、B社は夜間費用不明、C社は対応外。</p></div>
+          <div class="flow-item"><strong>答える</strong><p class="small">「A社は夜間対応と料金表が確認できます」と説明する。</p></div>
+          <div class="flow-item"><strong>選ばれる</strong><p class="small">お客さんは不安が減り、問い合わせしやすくなる。</p></div>
+        </div>
+
+        <div class="table-wrap">
+          <table class="mini-table">
+            <thead>
+              <tr><th>むずかしい言葉</th><th>やさしい言い換え</th><th>中小企業でやること</th></tr>
+            </thead>
+            <tbody>
+              <tr><td>Query fan-out</td><td>AIが質問を小分けにすること</td><td>料金、地域、比較、注意点のページを分けて用意する</td></tr>
+              <tr><td>RAG</td><td>調べた資料を見ながら答えること</td><td>AIが見ても誤解しないFAQと根拠を置く</td></tr>
+              <tr><td>引用監査</td><td>AIの答えが本当に出典で支えられているか確認すること</td><td>自社名、料金、実績が正しく引用されるか毎月見る</td></tr>
+              <tr><td>ペルソナ</td><td>どんな不安を持つお客さんか</td><td>年齢より「何が不安で決められないか」を集める</td></tr>
+            </tbody>
+          </table>
         </div>
       </section>
 
@@ -817,6 +1071,43 @@
         </div>
       </section>
 
+      <section id="work" data-chapter="work">
+        <h2>自社に置き換えるワーク</h2>
+        <p>空欄で止まらないよう、最初から例を入れています。自社名や機密情報をそのまま書く必要はありません。売る前の提案メモとして使ってください。</p>
+        <div class="work-grid">
+          <div class="work-card">
+            <label>自社の商品・サービス
+              <textarea id="workProduct">例: 品川区と大田区で対応する水漏れ修理。夜間対応あり。作業前見積もりを出す。</textarea>
+            </label>
+          </div>
+          <div class="work-card">
+            <label>お客さんが不安に思うこと
+              <textarea id="workWorry">例: 夜間料金が高くならないか。すぐ来るか。見積もり後に断れるか。</textarea>
+            </label>
+          </div>
+          <div class="work-card">
+            <label>比較される相手
+              <textarea id="workCompetitors">例: 大手修理会社、近所の工務店、口コミサイト上位の業者。</textarea>
+            </label>
+          </div>
+          <div class="work-card">
+            <label>今すぐ出せる証拠
+              <textarea id="workEvidence">例: 対応エリア、料金表、作業写真、営業時間、資格、口コミ、年間対応件数。</textarea>
+            </label>
+          </div>
+          <div class="work-card">
+            <label>まだ出せない証拠
+              <textarea id="workMissing">例: 作業別の平均時間、追加費用の発生条件、競合との違い、キャンセル条件。</textarea>
+            </label>
+          </div>
+          <div class="work-card">
+            <strong>AIに引用されたい1文</strong>
+            <textarea id="workOutput" readonly></textarea>
+          </div>
+        </div>
+        <div class="note">このワークの目的は「AIに刺さる魔法の文章」を作ることではありません。お客さんが不安に思う点を、表・FAQ・写真・実績で証明できる状態にすることです。</div>
+      </section>
+
       <section id="framework" data-chapter="framework">
         <h2>AIO実務フレーム</h2>
         <p>実務では「LLMに好かれる文章」を狙うのではなく、検索エンジン/回答エンジンが検出でき、ユーザーが意思決定に使え、引用が主張を支える状態を作ります。</p>
@@ -827,6 +1118,134 @@
           <div><strong>Structure</strong><p>見出し、表、FAQ、定義、手順、比較軸を機械が抜ける形にする。</p></div>
           <div><strong>Entity</strong><p>ブランド、商品、人物、所在地、カテゴリ、評判の表記を外部と一貫させる。</p></div>
           <div><strong>Measurement</strong><p>発火率、引用率、主張支持率、Top10重複、指名検索、直接流入を追う。</p></div>
+        </div>
+        <h3>Before / After</h3>
+        <div class="table-wrap">
+          <table class="mini-table">
+            <thead>
+              <tr><th>Before</th><th>なぜ弱いか</th><th>After</th></tr>
+            </thead>
+            <tbody>
+              <tr><td>当社は高品質です。</td><td>何をもって高品質か、AIも人間も判断できない。</td><td>検査手順、対応件数、保証範囲、担当資格、更新日を明記する。</td></tr>
+              <tr><td>料金はお問い合わせください。</td><td>比較クエリで証拠として使われにくい。</td><td>最低料金、追加費用の条件、見積もり無料/有料、キャンセル条件を書く。</td></tr>
+              <tr><td>どんな相談でも対応します。</td><td>対象外条件がなく、誤引用や期待外れが起きやすい。</td><td>得意領域、対象外、対応地域、対応時間、必要書類を表にする。</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <section id="smb" data-chapter="smb">
+        <h2>中小企業に持ってくると、何を作ればいいか</h2>
+        <p>中小企業で最初に狙うのは、難しい論文の実装ではありません。お客さんが問い合わせ前にAIへ聞く質問を集め、その答えを「引用しやすい営業資料」としてWebに置くことです。</p>
+        <div class="example-grid">
+          <div class="example-card">
+            <strong>地域サービス: 水漏れ修理</strong>
+            <p>質問例: 「品川区で夜間対応の水漏れ修理、料金が分かる業者は？」</p>
+            <p class="small">作るもの: 対応エリア表、夜間料金、到着目安、作業前見積もり、よくある追加費用、施工事例。</p>
+          </div>
+          <div class="example-card">
+            <strong>BtoB製造: 小ロット加工</strong>
+            <p>質問例: 「アルミ部品を小ロットで短納期加工できる会社は？」</p>
+            <p class="small">作るもの: 対応素材、加工精度、最小ロット、納期目安、設備一覧、図面入稿の注意点。</p>
+          </div>
+          <div class="example-card">
+            <strong>士業・コンサル</strong>
+            <p>質問例: 「補助金申請を初めて頼む時、何を準備すればいい？」</p>
+            <p class="small">作るもの: 必要書類、対象外条件、費用、期間、過去支援領域、相談前チェックリスト。</p>
+          </div>
+          <div class="example-card">
+            <strong>EC・小売</strong>
+            <p>質問例: 「初心者向けの防災セットで家族4人に必要なものは？」</p>
+            <p class="small">作るもの: 人数別比較表、使用期限、足りない物、保管場所、単品購入との違い。</p>
+          </div>
+          <div class="example-card">
+            <strong>飲食・店舗</strong>
+            <p>質問例: 「子連れで入りやすい駅近ランチ、ベビーカーOKは？」</p>
+            <p class="small">作るもの: 席数、段差、予約可否、キッズ対応、混雑時間、写真、アクセス。</p>
+          </div>
+          <div class="example-card">
+            <strong>SaaS・IT導入</strong>
+            <p>質問例: 「10人の会社で使える勤怠管理、導入が簡単なのは？」</p>
+            <p class="small">作るもの: 初期設定手順、料金、他社比較、サポート範囲、乗り換え時の注意点。</p>
+          </div>
+        </div>
+
+        <h3>1ページを作る時の型</h3>
+        <div class="table-wrap">
+          <table class="mini-table">
+            <thead>
+              <tr><th>場所</th><th>書く内容</th><th>例</th></tr>
+            </thead>
+            <tbody>
+              <tr><td>冒頭</td><td>誰向けで、何が解決できるかを1文で書く</td><td>「品川区で夜間の水漏れ修理を探している方向けに、料金と到着目安をまとめます。」</td></tr>
+              <tr><td>比較表</td><td>価格、納期、対応範囲、向き不向きを表にする</td><td>「軽度の水漏れ」「蛇口交換」「床下漏水」で費用目安を分ける</td></tr>
+              <tr><td>FAQ</td><td>問い合わせ前の不安を質問文で置く</td><td>「見積もり後に断れますか？」「夜間費用はいくらですか？」</td></tr>
+              <tr><td>根拠</td><td>実績、資格、更新日、写真、一次データを置く</td><td>「2026年5月更新」「年間対応件数」「作業前後の写真」</td></tr>
+              <tr><td>行動</td><td>次に何をすればよいかを明確にする</td><td>電話、LINE、見積もりフォーム、必要写真の案内</td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="note">中小企業では、記事を大量生産するより「問い合わせ前に必ず聞かれる20問」を先に整える方が効きます。AIにも人間にも、同じ情報が営業資料として働きます。</div>
+      </section>
+
+      <section id="money" data-chapter="money">
+        <h2>お金にする: AIOを商品に変える</h2>
+        <p>AIOは「知識」だけでは売れません。売れる形にするには、診断、制作、運用、レポートの4つに分けます。成果保証ではなく、納品物と測定項目を明確にするのが安全です。</p>
+
+        <div class="money-grid">
+          <div class="money-card">
+            <strong>入口商品: AI検索可視性診断</strong>
+            <p>価格例: 5万から15万円</p>
+            <p class="small">20から50クエリを観測し、AI回答の発火率、自社/競合の引用、誤情報、足りない証拠をレポート化する。</p>
+          </div>
+          <div class="money-card">
+            <strong>主力商品: 引用されるページ制作</strong>
+            <p>価格例: 20万から80万円</p>
+            <p class="small">料金表、比較表、FAQ、事例、構造化した説明文を作る。SEO記事ではなく、営業前の不安解消ページとして納品する。</p>
+          </div>
+          <div class="money-card">
+            <strong>継続商品: 月次AIO運用</strong>
+            <p>価格例: 月10万から50万円</p>
+            <p class="small">毎月クエリを再観測し、引用変化、競合変化、ページ改善、問い合わせ品質を見て改善する。</p>
+          </div>
+        </div>
+
+        <h3>営業で伝える一言</h3>
+        <div class="script-card">
+          <strong>営業トーク例</strong>
+          <p>「今後、お客さんはGoogleだけでなくChatGPTやAI検索に“どこに頼むべきか”を聞きます。その時に御社が候補に出るには、AIが引用できる料金表・比較表・FAQ・実績が必要です。まず50クエリで現状を診断し、競合と比べて何が足りないかを見える化します。」</p>
+        </div>
+
+        <h3>30日で売れる形にするロードマップ</h3>
+        <div class="week-grid">
+          <div class="week-card"><strong>1週目: 診断</strong><p>商圏、商品、競合、問い合わせ前質問を集め、20から50クエリでAI回答を観測する。</p></div>
+          <div class="week-card"><strong>2週目: 設計</strong><p>足りない証拠を、料金、比較、FAQ、事例、プロフィール、更新日のどれかに分類する。</p></div>
+          <div class="week-card"><strong>3週目: 制作</strong><p>問い合わせ前の不安に答えるページを3から5本作る。各ページに表、手順、注意点、根拠を入れる。</p></div>
+          <div class="week-card"><strong>4週目: 測定と提案</strong><p>再観測し、引用・誤情報・競合差分を示す。翌月の改善計画と運用契約を提案する。</p></div>
+        </div>
+
+        <h3>KPIは売上に近い順で見る</h3>
+        <div class="kpi-grid">
+          <div class="kpi-card"><strong>問い合わせKPI</strong><p>AI経由の指名検索、直接流入、フォームCV、電話数、商談化率、受注単価。</p></div>
+          <div class="kpi-card"><strong>AIO KPI</strong><p>AI回答発火率、自社引用率、競合引用率、主張支持率、誤情報数、引用ページ数。</p></div>
+          <div class="kpi-card"><strong>制作KPI</strong><p>FAQ数、比較表数、事例数、料金明記率、更新日明記率、構造化された見出し数。</p></div>
+          <div class="kpi-card"><strong>営業KPI</strong><p>診断提案数、診断受注率、制作移行率、月次運用継続率、粗利率。</p></div>
+        </div>
+
+        <div class="calc" aria-label="AIO収益計算機">
+          <h3>簡易収益計算機</h3>
+          <div class="calc-grid">
+            <label>月の顧客数<input id="clientCount" type="number" min="0" value="3"></label>
+            <label>月額単価(円)<input id="monthlyPrice" type="number" min="0" step="10000" value="200000"></label>
+            <label>外注/ツール原価(円)<input id="monthlyCost" type="number" min="0" step="10000" value="120000"></label>
+            <label>月の作業時間<input id="monthlyHours" type="number" min="1" value="45"></label>
+          </div>
+          <div class="calc-result">
+            <div><span class="small">月商</span><strong id="grossRevenue">0円</strong></div>
+            <div><span class="small">粗利</span><strong id="grossProfit">0円</strong></div>
+            <div><span class="small">時間単価</span><strong id="hourlyProfit">0円</strong></div>
+          </div>
         </div>
       </section>
 
@@ -859,6 +1278,17 @@
         <div class="book-grid" id="bookGrid"></div>
       </section>
 
+      <section id="ladder" data-chapter="ladder">
+        <h2>理解の階段</h2>
+        <p>年齢で上下をつけるためではなく、説明の深さを切り替えるための階段です。営業相手や社内メンバーには、相手がいる段に合わせて説明します。</p>
+        <div class="ladder-grid">
+          <div class="ladder-card"><strong>小学生レベル</strong><p>AIOは、AIが紹介しやすいように、お店の情報を分かりやすく置くこと。</p><p class="small">確認問題: AIが困るページは「値段があるページ」と「何も書いていないページ」のどちら？</p></div>
+          <div class="ladder-card"><strong>中学生レベル</strong><p>AIは質問を分け、複数ページを読み、根拠を使って答える。だからFAQと比較表が大事。</p><p class="small">確認問題: なぜ「料金はお問い合わせください」だけだと弱い？</p></div>
+          <div class="ladder-card"><strong>高校生レベル</strong><p>AIOは、検索、読解、生成、引用、測定をつなげる情報設計。引用があっても主張を支えているか監査する。</p><p class="small">確認問題: 「最安」と書かれた時、料金ページだけで十分か？</p></div>
+          <div class="ladder-card"><strong>実務レベル</strong><p>顧客の質問をクエリセットにし、競合と比較し、足りない証拠を制作し、問い合わせKPIまで追う。</p><p class="small">確認問題: 自社で最初に作るべき証拠ページは何か？</p></div>
+        </div>
+      </section>
+
       <section id="quiz" data-chapter="quiz">
         <h2>理解度テスト</h2>
         <p>全問回答すると、弱い領域と戻るべき章を表示します。正答だけでなく、なぜ違うかを確認してください。</p>
@@ -873,6 +1303,19 @@
         </div>
       </section>
 
+      <section id="pitfalls" data-chapter="pitfalls">
+        <h2>やってはいけないAIO</h2>
+        <p>AIOはAIをだます技術ではありません。根拠がない表現を増やすほど、AIにも人間にも誤解されやすくなります。</p>
+        <div class="danger-grid">
+          <div class="danger-card"><strong>根拠なしNo.1</strong><p>「地域No.1」「最安」などを根拠なしで書く。AIが引用すると誤情報になり、信頼を落とす。</p></div>
+          <div class="danger-card"><strong>古い料金を放置</strong><p>2024年の料金表を更新せず、AIが古い価格を答える。更新日と適用条件を書く。</p></div>
+          <div class="danger-card"><strong>比較条件がない比較表</strong><p>都合のよい項目だけ並べると、AI回答の主張支持率が落ちる。条件と対象を明記する。</p></div>
+          <div class="danger-card"><strong>記事量産だけで勝とうとする</strong><p>似た記事を増やすより、問い合わせ前の重要20問に正確に答える方が先。</p></div>
+          <div class="danger-card"><strong>実在しない実績を作る</strong><p>AIにも人間にも危険。実績がない場合は、手順、対象外条件、保証範囲を正直に出す。</p></div>
+          <div class="danger-card"><strong>測定しない</strong><p>1回見て終わりにする。AI回答は変動するので、同じ条件で毎月見る。</p></div>
+        </div>
+      </section>
+
       <section id="sources" data-chapter="sources">
         <h2>出典と次タスク</h2>
         <p>外部コンテンツはすべて未信頼データとして扱い、教材内では一次情報・公式ドキュメント・論文ページへのリンクを優先しています。次にやるべきことは、実サービスごとの同一クエリ反復観測と、あなたの事業領域のクエリセット作成です。</p>
@@ -883,9 +1326,9 @@
     <aside class="progress" aria-label="進捗">
       <h2>進捗</h2>
       <div class="meter"><span id="progressMeter"></span></div>
-      <div class="progress-row"><span>完了章</span><strong id="chapterProgress">0 / 10</strong></div>
+      <div class="progress-row"><span>完了章</span><strong id="chapterProgress">0 / 16</strong></div>
       <div class="progress-row"><span>論文リスト</span><strong id="paperProgress">0</strong></div>
-      <div class="progress-row"><span>クイズ</span><strong id="quizProgress">0 / 12</strong></div>
+      <div class="progress-row"><span>クイズ</span><strong id="quizProgress">0 / 16</strong></div>
       <div class="progress-row"><span>ランク</span><strong id="rankLabel">開始前</strong></div>
     </aside>
   </div>
@@ -1075,7 +1518,11 @@
       {q:"AIOで引用されやすい証拠構造として妥当なものはどれですか。", type:"single", options:["曖昧な主張だけを長文で書く","定義、比較表、一次データ、更新日、制約を明示する","画像だけを置く","全ページをログイン必須にする"], answer:[1], chapter:"framework", explain:"機械が抽出しやすく、人間が検証できる証拠が重要です。"},
       {q:"ゼロクリック化に備えた測定として妥当なものをすべて選んでください。", type:"multi", options:["AI回答発火率","引用率","指名検索","直接流入","引用の主張支持率"], answer:[0,1,2,3,4], chapter:"framework", explain:"クリックだけではAI回答面の影響を測れません。"},
       {q:"Lost in the Middleが示す実務上の注意はどれですか。", type:"single", options:["重要情報を長文の中央に埋もれさせない","すべての情報を隠す","タイトルを空にする","引用を消す"], answer:[0], chapter:"papers", explain:"長文脈では中央情報が使われにくいことがあり、重要根拠は構造化して見つけやすくします。"},
-      {q:"AIOの最終目標として最も正しいものはどれですか。", type:"single", options:["LLMをだます","検索順位だけを上げる","正確で検証可能な証拠として採用され、ユーザーの意思決定を助ける","記事を短くするだけ"], answer:[2], chapter:"overview", explain:"AIOの中心は、回答生成面で使われる信頼可能な証拠になることです。"}
+      {q:"AIOの最終目標として最も正しいものはどれですか。", type:"single", options:["LLMをだます","検索順位だけを上げる","正確で検証可能な証拠として採用され、ユーザーの意思決定を助ける","記事を短くするだけ"], answer:[2], chapter:"overview", explain:"AIOの中心は、回答生成面で使われる信頼可能な証拠になることです。"},
+      {q:"小学生向けにAIOを説明するなら、最も近いものはどれですか。", type:"single", options:["AIに秘密の命令を入れること","AIが紹介しやすいように、お店の情報を分かりやすく置くこと","文字数を増やすこと","検索広告だけを増やすこと"], answer:[1], chapter:"plain", explain:"AIOは小技ではなく、AIにも人間にも分かる情報と根拠を置くことです。"},
+      {q:"地域の修理会社が最初に作るべき証拠として妥当なものをすべて選んでください。", type:"multi", options:["対応エリア","料金表","夜間や追加費用の条件","作業写真や事例","根拠なしの地域No.1"], answer:[0,1,2,3], chapter:"smb", explain:"中小企業では、問い合わせ前の不安を減らす証拠が最優先です。根拠なしNo.1は危険です。"},
+      {q:"AIOをお金にする入口商品として最も売りやすいものはどれですか。", type:"single", options:["成果保証つき順位アップ","AI検索可視性診断","根拠なし記事100本量産","競合名を隠すだけ"], answer:[1], chapter:"money", explain:"まず診断で現状、競合、誤引用、足りない証拠を見える化すると提案につなげやすいです。"},
+      {q:"AI回答が「この会社は最短即日対応」と書いたが、引用先には営業時間しか書いていません。監査結果として最も妥当なのはどれですか。", type:"single", options:["支持","不十分","必ず正しい","引用があるので確認不要"], answer:[1], chapter:"pitfalls", explain:"営業時間だけでは最短即日対応という主張を支えきれません。主張と証拠を分けて見ます。"}
     ];
 
     const diagrams = {
@@ -1100,6 +1547,42 @@
       answers: safeParseStorage("aio:answers", {}),
       paperFilter: "all"
     };
+
+    function yen(value) {
+      return `${Math.round(value).toLocaleString("ja-JP")}円`;
+    }
+
+    function updateWorkOutput() {
+      const product = document.getElementById("workProduct")?.value.trim() || "自社サービス";
+      const worry = document.getElementById("workWorry")?.value.trim() || "問い合わせ前の不安";
+      const evidence = document.getElementById("workEvidence")?.value.trim() || "証拠";
+      const missing = document.getElementById("workMissing")?.value.trim() || "不足証拠";
+      const output = document.getElementById("workOutput");
+      if (!output) return;
+      output.value = [
+        `${product}は、${worry}に不安がある人向けに、${evidence}を公開して判断を助けるサービスです。`,
+        "",
+        "次に作るページ:",
+        "- 料金・条件が分かるページ",
+        "- 比較される相手との差分ページ",
+        "- よくある不安に答えるFAQ",
+        "- 実績・写真・更新日を載せた根拠ページ",
+        "",
+        `不足している証拠: ${missing}`
+      ].join("\n");
+    }
+
+    function updateMoneyCalc() {
+      const clients = Number(document.getElementById("clientCount")?.value || 0);
+      const price = Number(document.getElementById("monthlyPrice")?.value || 0);
+      const cost = Number(document.getElementById("monthlyCost")?.value || 0);
+      const hours = Math.max(1, Number(document.getElementById("monthlyHours")?.value || 1));
+      const revenue = clients * price;
+      const profit = revenue - cost;
+      document.getElementById("grossRevenue").textContent = yen(revenue);
+      document.getElementById("grossProfit").textContent = yen(profit);
+      document.getElementById("hourlyProfit").textContent = yen(profit / hours);
+    }
 
     function renderEngines() {
       document.getElementById("engineGrid").innerHTML = engines.map(engine => `
@@ -1315,6 +1798,12 @@
       const target = document.querySelector(event.target.value);
       if (target) target.scrollIntoView({ behavior: "smooth", block: "start" });
     });
+    ["workProduct", "workWorry", "workCompetitors", "workEvidence", "workMissing"].forEach(id => {
+      document.getElementById(id)?.addEventListener("input", updateWorkOutput);
+    });
+    ["clientCount", "monthlyPrice", "monthlyCost", "monthlyHours"].forEach(id => {
+      document.getElementById(id)?.addEventListener("input", updateMoneyCalc);
+    });
 
     renderEngines();
     renderPersonas();
@@ -1323,6 +1812,8 @@
     renderSources();
     renderDiagram();
     renderQuiz();
+    updateWorkOutput();
+    updateMoneyCalc();
     setupObservers();
     updateProgress();
   </script>
