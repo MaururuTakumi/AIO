@@ -370,6 +370,7 @@
       <option value="#papers">論文からの行動</option>
       <option value="#report">レポート型</option>
       <option value="#references">出典</option>
+      <option value="scale.html">大規模測定</option>
     </select>
   </div>
 
@@ -384,6 +385,7 @@
       </div>
       <nav>
         <a href="index.html">AIO教材へ戻る</a>
+        <a href="scale.html">大規模AI回答測定へ</a>
         <a href="#overview">結論</a>
         <a href="#proof">何を証明できるか</a>
         <a href="#protocol">観測プロトコル</a>
@@ -414,6 +416,7 @@
               <span class="tag amber">主張支持率</span>
               <span class="tag coral">pre/post + control</span>
               <span class="tag green">顧客レポート化</span>
+              <a class="tag blue" href="scale.html">大規模測定・AI向け施策</a>
             </div>
           </div>
           <div class="diagram" aria-label="AI回答観測の全体図">
@@ -725,6 +728,10 @@
     });
 
     document.getElementById("mobileChapterSelect").addEventListener("change", event => {
+      if (!event.target.value.startsWith("#")) {
+        window.location.href = event.target.value;
+        return;
+      }
       const target = document.querySelector(event.target.value);
       if (target) target.scrollIntoView({ behavior: "smooth", block: "start" });
     });

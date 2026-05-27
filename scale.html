@@ -1,0 +1,681 @@
+<!doctype html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Scalable AI Answer Measurement Lab</title>
+  <style>
+    :root {
+      --bg: #f7f8fb;
+      --paper: #ffffff;
+      --ink: #17212f;
+      --muted: #627084;
+      --line: #d8dee8;
+      --teal: #0f766e;
+      --blue: #2563eb;
+      --amber: #b45309;
+      --coral: #dc5b46;
+      --green: #15803d;
+      --red: #b91c1c;
+      --violet: #6d28d9;
+      --shadow: 0 10px 28px rgba(23, 33, 47, .08);
+      --radius: 8px;
+    }
+
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      margin: 0;
+      color: var(--ink);
+      background: var(--bg);
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      line-height: 1.65;
+      letter-spacing: 0;
+    }
+    a { color: var(--blue); text-underline-offset: 3px; }
+    h1, h2, h3 { margin: 0; line-height: 1.25; letter-spacing: 0; }
+    h1 { font-size: clamp(30px, 4vw, 48px); margin: 8px 0 14px; }
+    h2 { font-size: 24px; margin-bottom: 12px; }
+    h3 { font-size: 18px; margin: 20px 0 8px; }
+    p { margin: 0 0 12px; }
+    button, input, select, textarea { font: inherit; }
+    button {
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      background: var(--paper);
+      color: var(--ink);
+      min-height: 40px;
+      padding: 8px 12px;
+      cursor: pointer;
+    }
+    button:hover { border-color: var(--teal); background: #e8f5f3; }
+
+    .app-shell {
+      display: grid;
+      grid-template-columns: 246px minmax(0, 1fr);
+      gap: 22px;
+      max-width: 1400px;
+      margin: 0 auto;
+      padding: 20px;
+    }
+
+    .side {
+      position: sticky;
+      top: 16px;
+      align-self: start;
+      max-height: calc(100vh - 32px);
+      overflow: auto;
+      background: var(--paper);
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      padding: 14px;
+    }
+
+    .brand {
+      display: grid;
+      grid-template-columns: 34px 1fr;
+      gap: 10px;
+      align-items: center;
+      margin-bottom: 14px;
+      padding-bottom: 12px;
+      border-bottom: 1px solid var(--line);
+    }
+    .brand-mark {
+      display: grid;
+      place-items: center;
+      width: 34px;
+      height: 34px;
+      border-radius: 7px;
+      background: var(--ink);
+      color: white;
+      font-weight: 800;
+    }
+    .brand strong { display: block; font-size: 14px; }
+    .brand span { display: block; color: var(--muted); font-size: 12px; }
+    nav a {
+      display: block;
+      padding: 8px 9px;
+      border-radius: 7px;
+      color: var(--ink);
+      text-decoration: none;
+      font-size: 14px;
+    }
+    nav a:hover { background: #e8f5f3; color: #0f5e58; }
+
+    main { min-width: 0; }
+    section {
+      background: var(--paper);
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      margin-bottom: 22px;
+      padding: 22px;
+      scroll-margin-top: 16px;
+    }
+
+    .eyebrow {
+      color: var(--teal);
+      font-weight: 700;
+      font-size: 13px;
+      text-transform: uppercase;
+    }
+    .lead {
+      color: #344155;
+      font-size: 17px;
+      max-width: 920px;
+    }
+    .hero-grid {
+      display: grid;
+      grid-template-columns: minmax(0, 1.05fr) minmax(300px, .95fr);
+      gap: 18px;
+      align-items: stretch;
+    }
+    .answer-box {
+      border: 1px solid #a7d8d1;
+      background: #eefaf8;
+      border-radius: var(--radius);
+      padding: 14px;
+      margin: 14px 0;
+    }
+    .answer-box strong { display: block; margin-bottom: 6px; }
+    .tag-row, .toolbar {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      align-items: center;
+    }
+    .tag {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      border-radius: 999px;
+      background: #edf2f7;
+      color: #38475b;
+      font-size: 12px;
+      padding: 4px 9px;
+      white-space: nowrap;
+      text-decoration: none;
+    }
+    .tag.teal { background: #dff4ef; color: #0f5e58; }
+    .tag.blue { background: #e7eeff; color: #174ea6; }
+    .tag.amber { background: #fff0d8; color: #8a4500; }
+    .tag.coral { background: #ffe5df; color: #a83d2b; }
+    .tag.green { background: #e4f7e9; color: #12642d; }
+    .tag.violet { background: #efe7ff; color: #5422a8; }
+    .diagram {
+      min-height: 320px;
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      background: #fbfcff;
+      padding: 12px;
+      display: grid;
+      place-items: center;
+      overflow: hidden;
+    }
+    svg { max-width: 100%; height: auto; }
+    svg text { font-family: inherit; fill: var(--ink); }
+
+    .grid-2, .grid-3, .grid-4, .matrix, .metric-grid, .decision-grid, .evidence-grid, .calc-grid {
+      display: grid;
+      gap: 12px;
+    }
+    .grid-2 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .grid-3 { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+    .grid-4 { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+    .matrix { grid-template-columns: repeat(5, minmax(0, 1fr)); }
+    .metric-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+    .decision-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+    .evidence-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .calc-grid { grid-template-columns: 280px minmax(0, 1fr); align-items: start; }
+
+    .card, .metric, .cell, .decision, .evidence, .risk, .stat {
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      background: #fbfcff;
+      padding: 14px;
+      min-width: 0;
+    }
+    .card strong, .metric strong, .cell strong, .decision strong, .evidence strong, .risk strong, .stat strong {
+      display: block;
+      margin-bottom: 6px;
+    }
+    .metric strong { color: var(--teal); }
+    .decision.good { border-color: #9fd6af; background: #effaf2; }
+    .decision.test { border-color: #f1d18c; background: #fff9eb; }
+    .decision.bad { border-color: #e9aaa0; background: #fff2ef; }
+    .risk { border-color: #e9aaa0; background: #fff2ef; }
+    .small { color: var(--muted); font-size: 13px; }
+
+    .table-wrap {
+      overflow-x: auto;
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      margin: 12px 0;
+      background: #fff;
+    }
+    table {
+      width: 100%;
+      min-width: 880px;
+      border-collapse: collapse;
+      font-size: 14px;
+    }
+    th, td {
+      padding: 10px;
+      border-bottom: 1px solid var(--line);
+      text-align: left;
+      vertical-align: top;
+    }
+    th { background: #f1f5f9; }
+    tr:last-child td { border-bottom: 0; }
+
+    .note {
+      border-left: 4px solid var(--amber);
+      background: #fff8ec;
+      padding: 12px 14px;
+      border-radius: 0 var(--radius) var(--radius) 0;
+      margin: 14px 0;
+    }
+    .danger {
+      border-left: 4px solid var(--red);
+      background: #fff2ef;
+      padding: 12px 14px;
+      border-radius: 0 var(--radius) var(--radius) 0;
+      margin: 14px 0;
+    }
+    .ok {
+      border-left: 4px solid var(--green);
+      background: #effaf2;
+      padding: 12px 14px;
+      border-radius: 0 var(--radius) var(--radius) 0;
+      margin: 14px 0;
+    }
+    .formula {
+      font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+      background: #0f172a;
+      color: #e5edf7;
+      border-radius: var(--radius);
+      padding: 12px;
+      overflow-x: auto;
+      white-space: pre;
+      font-size: 13px;
+    }
+    .calc-box label {
+      display: grid;
+      grid-template-columns: 1fr 92px;
+      gap: 10px;
+      align-items: center;
+      margin-bottom: 10px;
+      color: var(--muted);
+      font-size: 14px;
+    }
+    .calc-box input {
+      width: 92px;
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      padding: 7px;
+      background: white;
+      color: var(--ink);
+    }
+    .calc-result {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 10px;
+    }
+    .calc-result div {
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      background: white;
+      padding: 12px;
+    }
+    .calc-result strong {
+      display: block;
+      font-size: 22px;
+    }
+    .mobile-bar { display: none; }
+    .mobile-select {
+      max-width: 58vw;
+      min-height: 38px;
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      padding: 7px 9px;
+      background: #fff;
+      color: var(--ink);
+    }
+
+    @media (max-width: 1120px) {
+      .app-shell { grid-template-columns: 220px minmax(0, 1fr); }
+      .hero-grid, .calc-grid { grid-template-columns: 1fr; }
+      .grid-4, .matrix, .metric-grid, .decision-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    }
+
+    @media (max-width: 760px) {
+      .app-shell { display: block; padding: 74px 12px 12px; }
+      .side { display: none; }
+      .mobile-bar {
+        position: fixed;
+        z-index: 10;
+        top: 0;
+        left: 0;
+        right: 0;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        justify-content: space-between;
+        padding: 10px 12px;
+        background: rgba(255, 255, 255, .95);
+        border-bottom: 1px solid var(--line);
+        backdrop-filter: blur(10px);
+      }
+      section { padding: 16px; margin-bottom: 14px; }
+      h1 { font-size: 30px; }
+      h2 { font-size: 22px; }
+      .hero-grid, .grid-2, .grid-3, .grid-4, .matrix, .metric-grid, .decision-grid, .evidence-grid, .calc-result {
+        grid-template-columns: 1fr;
+      }
+      .diagram { min-height: 250px; padding: 8px; }
+      .tag { white-space: normal; }
+      table { min-width: 760px; }
+    }
+  </style>
+</head>
+<body>
+  <div class="mobile-bar">
+    <strong>Scale</strong>
+    <select id="mobileChapterSelect" class="mobile-select" aria-label="章へ移動">
+      <option value="#overview">結論</option>
+      <option value="#variance">なぜ変わるか</option>
+      <option value="#matrix">測定行列</option>
+      <option value="#ui-api">UIとAPI</option>
+      <option value="#panel">アカウント差</option>
+      <option value="#ai-files">AI向けファイル</option>
+      <option value="#hidden">隠し施策</option>
+      <option value="#metrics">メトリクス</option>
+      <option value="#calculator">規模計算</option>
+      <option value="#evidence">証拠レベル</option>
+      <option value="#playbook">実務手順</option>
+      <option value="#references">出典</option>
+    </select>
+    <a class="tag teal" href="measurement.html">観測基礎</a>
+  </div>
+
+  <div class="app-shell">
+    <aside class="side" aria-label="章ナビゲーション">
+      <div class="brand">
+        <div class="brand-mark">AI</div>
+        <div>
+          <strong>Scale Lab</strong>
+          <span>大規模AI回答測定・AI向け施策</span>
+        </div>
+      </div>
+      <nav>
+        <a href="index.html">AIO教材トップ</a>
+        <a href="measurement.html">AI回答観測プロトコル</a>
+        <a href="#overview">結論</a>
+        <a href="#variance">なぜ変わるか</a>
+        <a href="#matrix">測定行列</a>
+        <a href="#ui-api">UIとAPI</a>
+        <a href="#panel">アカウント差</a>
+        <a href="#ai-files">AI向けファイル</a>
+        <a href="#hidden">隠し施策</a>
+        <a href="#metrics">メトリクス</a>
+        <a href="#calculator">規模計算</a>
+        <a href="#evidence">証拠レベル</a>
+        <a href="#playbook">実務手順</a>
+        <a href="#references">出典</a>
+      </nav>
+    </aside>
+
+    <main>
+      <section id="overview">
+        <div class="hero-grid">
+          <div>
+            <div class="eyebrow">Scalable Measurement</div>
+            <h1>AI回答の大規模測定は可能。ただし「API測定」と「Chat画面測定」を混ぜると壊れます。</h1>
+            <p class="lead">あなたのGeminiアカウントと、お母さんのアカウントで結果が変わる可能性はあります。履歴、地域、言語、検索面、UI、モデル更新、メモリ、パーソナライズが混ざるからです。だからAIO事業者は、個別スクショではなく、条件を分けた測定行列として扱います。</p>
+            <div class="answer-box">
+              <strong>最初の答え</strong>
+              <p>スケールできるのは「条件付きの観測」です。APIで大量に傾向を測り、Chat画面は少数の人間パネルで定点観測する。UI/API/アカウント/地域/時間を別カラムで記録し、同じ平均に混ぜない。これが現実的な最高解です。</p>
+            </div>
+            <div class="tag-row">
+              <span class="tag teal">API大規模測定</span>
+              <span class="tag blue">Chat画面パネル</span>
+              <span class="tag amber">個人化の分離</span>
+              <span class="tag coral">llms.txtは実験段階</span>
+              <span class="tag green">隠し命令は非推奨</span>
+            </div>
+          </div>
+          <div class="diagram" aria-label="大規模AI回答測定の構造">
+            <svg viewBox="0 0 640 420" role="img">
+              <defs>
+                <marker id="arrow" markerWidth="10" markerHeight="10" refX="8" refY="5" orient="auto">
+                  <path d="M0,0 L10,5 L0,10 z" fill="#627084"></path>
+                </marker>
+              </defs>
+              <rect x="40" y="30" width="155" height="66" rx="8" fill="#e7eeff" stroke="#2563eb"></rect>
+              <text x="118" y="58" text-anchor="middle" font-weight="700">Query Panel</text>
+              <text x="118" y="80" text-anchor="middle">固定質問群</text>
+              <path d="M195 63 H250" stroke="#627084" stroke-width="2" marker-end="url(#arrow)"></path>
+              <rect x="250" y="18" width="150" height="90" rx="8" fill="#dff4ef" stroke="#0f766e"></rect>
+              <text x="325" y="50" text-anchor="middle" font-weight="700">API Layer</text>
+              <text x="325" y="72" text-anchor="middle">大量・固定条件</text>
+              <path d="M400 63 H455" stroke="#627084" stroke-width="2" marker-end="url(#arrow)"></path>
+              <rect x="455" y="30" width="145" height="66" rx="8" fill="#fff0d8" stroke="#b45309"></rect>
+              <text x="528" y="58" text-anchor="middle" font-weight="700">Trend</text>
+              <text x="528" y="80" text-anchor="middle">傾向・分散</text>
+              <rect x="250" y="150" width="150" height="90" rx="8" fill="#ffe5df" stroke="#dc5b46"></rect>
+              <text x="325" y="182" text-anchor="middle" font-weight="700">UI Panel</text>
+              <text x="325" y="204" text-anchor="middle">人間アカウント</text>
+              <path d="M325 108 V150" stroke="#627084" stroke-width="2" marker-end="url(#arrow)"></path>
+              <path d="M400 195 H455" stroke="#627084" stroke-width="2" marker-end="url(#arrow)"></path>
+              <rect x="455" y="162" width="145" height="66" rx="8" fill="#efe7ff" stroke="#6d28d9"></rect>
+              <text x="528" y="190" text-anchor="middle" font-weight="700">Calibration</text>
+              <text x="528" y="212" text-anchor="middle">実体験の差</text>
+              <rect x="70" y="305" width="500" height="70" rx="8" fill="#f1f5f9" stroke="#94a3b8"></rect>
+              <text x="320" y="335" text-anchor="middle" font-weight="700">Separate, Compare, Never Blend</text>
+              <text x="320" y="360" text-anchor="middle">API平均とChat画面平均を同じKPIにしない</text>
+              <path d="M528 228 V305" stroke="#627084" stroke-width="2" marker-end="url(#arrow)"></path>
+              <path d="M528 96 V305" stroke="#627084" stroke-width="2" marker-end="url(#arrow)"></path>
+            </svg>
+          </div>
+        </div>
+      </section>
+
+      <section id="variance">
+        <h2>なぜ、僕とお母さんでAI回答が変わるのか</h2>
+        <p>変わる可能性はあります。これは「AIが気分で答えている」だけではなく、入力前後の条件が違うからです。測定では、変動要因を潰すのではなく、変数として保存します。</p>
+        <div class="grid-4">
+          <div class="card"><strong>アカウント履歴</strong><p>過去の会話、検索履歴、保存された設定、メモリがクエリや回答に影響し得る。OpenAIもメモリが検索クエリに使われ得ると説明しています。</p></div>
+          <div class="card"><strong>地域と言語</strong><p>位置情報、IP、端末言語、表示言語でローカル候補や引用元が変わる。地域商材では特に強い。</p></div>
+          <div class="card"><strong>UIの処理</strong><p>Chat画面は検索、要約、引用表示、会話文脈、UI独自ルーティングを含む。APIの素の出力とは別物です。</p></div>
+          <div class="card"><strong>時間差</strong><p>モデル更新、インデックス更新、ランキング更新、ニュース性で回答は動く。1回の結果は観測点であって結論ではありません。</p></div>
+        </div>
+        <div class="note">結論: 個人差は「ノイズ」ではなく測る対象です。`account_type`、`surface`、`region`、`time_bucket` をログに入れない測定は、あとから説明できません。</div>
+      </section>
+
+      <section id="matrix">
+        <h2>スケーラブル測定の基本行列</h2>
+        <p>大規模にやる時は、下の掛け算で観測数を設計します。全部を最大化すると破綻するので、APIで広く、UIで狭く深く見ます。</p>
+        <div class="matrix">
+          <div class="cell"><strong>Query</strong><p>固定クエリ。指名、比較、推薦、課題解決、地域、料金、評判に分類。</p></div>
+          <div class="cell"><strong>Surface</strong><p>Chat UI、API、AI検索、通常検索、Perplexityなど。混ぜない。</p></div>
+          <div class="cell"><strong>Account</strong><p>クリーン、通常利用、業界関心、地域違い。規約違反の量産はしない。</p></div>
+          <div class="cell"><strong>Time</strong><p>同日反復、日次、週次、月次。ニュース商材は短く、B2Bは長く。</p></div>
+          <div class="cell"><strong>Judge</strong><p>出現、引用、順位、正確性、推奨強度、主張支持率を判定。</p></div>
+        </div>
+        <div class="formula">observations = queries × surfaces × account_panels × regions × repeats × waves</div>
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr><th>規模</th><th>設計</th><th>言えること</th><th>言えないこと</th></tr>
+            </thead>
+            <tbody>
+              <tr><td>Lite</td><td>30クエリ × 2面 × 3反復</td><td>現状診断、重要クエリの危険箇所。</td><td>全ユーザーでの表示率。</td></tr>
+              <tr><td>Standard</td><td>100クエリ × API 3面 × 5反復 + UI 3アカウント</td><td>大まかな傾向、競合Share、個人差の有無。</td><td>UI全体の母集団代表性。</td></tr>
+              <tr><td>Proof</td><td>200クエリ × 複数週 × 対照群 × 施策ログ</td><td>施策前後の変化と寄与の説明。</td><td>AI内部評価の完全な証明。</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <section id="ui-api">
+        <h2>APIとChat画面は、同じ検索をしている前提で扱わない</h2>
+        <p>APIは条件を固定しやすく、大量測定に向きます。一方、Chat画面は実ユーザー体験に近いが、履歴、ログイン状態、表示処理、検索面の実装差が入りやすい。AIOレポートでは、両者を別KPIにします。</p>
+        <div class="decision-grid">
+          <div class="decision good"><strong>API測定でやる</strong><p>大量クエリ、反復、抽出、比較、信頼区間、プロンプト固定、出力JSON化。傾向を見る本体。</p></div>
+          <div class="decision test"><strong>UI測定でやる</strong><p>実ユーザーに見える回答、引用表示、画面上の推薦順、アカウント差。少数でも必ず残す校正層。</p></div>
+          <div class="decision bad"><strong>やらない</strong><p>API結果とUI結果を平均して「AI表示率」と呼ぶ。これは測定対象が違うため、説明責任に耐えません。</p></div>
+        </div>
+        <h3>実務上の分け方</h3>
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr><th>観測面</th><th>強い点</th><th>弱い点</th><th>レポート名</th></tr>
+            </thead>
+            <tbody>
+              <tr><td>API + Web検索ツール</td><td>自動化、反復、コスト計算、再現性。</td><td>Chat画面の個人化やUI引用とは一致しない。</td><td>API回答傾向</td></tr>
+              <tr><td>ログインChat UI</td><td>実体験に近い。</td><td>履歴・メモリ・UI更新の影響を受ける。</td><td>UI定点観測</td></tr>
+              <tr><td>クリーンブラウザ/UI</td><td>個人履歴の影響を下げられる。</td><td>実ユーザーの文脈とは違う。</td><td>クリーンUI観測</td></tr>
+              <tr><td>通常検索SERP</td><td>既存SEOとの比較ができる。</td><td>AI回答内引用とは別指標。</td><td>検索順位対照</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <section id="panel">
+        <h2>Geminiの自分アカウント vs 家族アカウント問題</h2>
+        <p>個人アカウントで結果が変わるかを調べるには、パネル化します。ただし、規約回避の大量アカウント作成はしません。協力者の同意、個人情報の最小化、ログ匿名化が前提です。</p>
+        <div class="grid-3">
+          <div class="card"><strong>Clean Panel</strong><p>新規に近い環境、履歴少なめ、標準設定。基準線として使う。</p></div>
+          <div class="card"><strong>Real User Panel</strong><p>普段使いのアカウント。実ユーザー体験に近いが、再現性は低い。</p></div>
+          <div class="card"><strong>Persona Prompt Panel</strong><p>同一アカウント/APIでペルソナ文だけ変える。人間アカウント差とは別に扱う。</p></div>
+        </div>
+        <div class="ok">おすすめ: `API大規模測定 80%`、`クリーンUI 10%`、`実ユーザーUI 10%`。まず大きな傾向をAPIで掴み、重要クエリだけUIで検証します。</div>
+        <div class="danger">禁止ライン: CAPTCHA回避、規約を避ける多重アカウント、本人同意なしの家族アカウント利用、個人情報入りプロンプトの保存。</div>
+      </section>
+
+      <section id="ai-files">
+        <h2>Markdown for AI、llms.txt、構造化データに意味はあるか</h2>
+        <p>意味はあります。ただし「AI順位を直接上げる魔法」ではありません。人間に見える正確な情報を、クローラーやAIエージェントにも誤解なく読ませる補助線として使います。</p>
+        <div class="decision-grid">
+          <div class="decision good"><strong>公式に強い</strong><p>HTML本文、title/meta、内部リンク、XMLサイトマップ、robots.txt、Schema.org構造化データ。GoogleはAI機能でも通常の検索基礎を重視すると説明しています。</p></div>
+          <div class="decision test"><strong>実験として有用</strong><p>`llms.txt`、Markdown版ページ、要約MD、APIドキュメント風ページ。RAGやエージェントが読みやすいが、主要AIがランキング要因に使う証明はまだ弱い。</p></div>
+          <div class="decision bad"><strong>避ける</strong><p>人間に見えないAI専用指示、hidden text、display:noneの宣伝文、AIに命令するコメント。これはスパム・セキュリティリスクとして扱う。</p></div>
+        </div>
+        <h3>実装するならこの順番</h3>
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr><th>施策</th><th>目的</th><th>証拠レベル</th><th>注意</th></tr>
+            </thead>
+            <tbody>
+              <tr><td>公開HTMLの整理</td><td>人間とクローラーが同じ情報を読む。</td><td>公式SEO基礎として強い。</td><td>人間に見える内容を正とする。</td></tr>
+              <tr><td>構造化データ</td><td>会社、商品、FAQ、レビュー、価格などの実体を機械可読にする。</td><td>Schema.org/Googleで公式に支援。</td><td>見える本文と一致させる。</td></tr>
+              <tr><td>sitemap.xml</td><td>URL発見を助ける。</td><td>標準的。</td><td>インデックス保証ではない。</td></tr>
+              <tr><td>robots.txt</td><td>許可/拒否の意思表示。</td><td>RFC 9309で標準化。</td><td>アクセス制御ではない。</td></tr>
+              <tr><td>llms.txt</td><td>AI/エージェント向けのサイト案内。</td><td>コミュニティ提案。</td><td>効果測定対象として実験する。</td></tr>
+              <tr><td>Markdown版</td><td>RAG、資料化、引用しやすさ。</td><td>実務上有用。</td><td>HTMLと矛盾させない。</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <section id="hidden">
+        <h2>「AIにしか読めない #これは...」のような施策はやるべきか</h2>
+        <p>結論は、やらない方がいいです。AIにだけ読ませる隠し命令は、SEOではなく、隠しテキスト、クローク、またはプロンプトインジェクションに近いリスクとして扱うべきです。</p>
+        <div class="grid-3">
+          <div class="risk"><strong>法務・規約リスク</strong><p>Googleのスパムポリシーは隠しテキスト、クローク、検索順位操作を問題視します。人間に見せない宣伝文は説明しにくい。</p></div>
+          <div class="risk"><strong>セキュリティリスク</strong><p>OpenAIやOWASPはプロンプトインジェクションをLLMの安全問題として扱っています。ブランド側がそれを使うと信用を落とします。</p></div>
+          <div class="risk"><strong>測定不能リスク</strong><p>仮に一時的に効いて見えても、どのAIが読んだか、どの条件で効いたか、持続するかを証明しにくい。</p></div>
+        </div>
+        <div class="ok">代替案: 隠すのではなく、本文に「料金」「対象地域」「対応条件」「比較条件」「更新日」「根拠」を明示し、構造化データとMarkdown版にも同じ内容を置く。</div>
+      </section>
+
+      <section id="metrics">
+        <h2>大規模測定で見るべきメトリクス</h2>
+        <div class="metric-grid">
+          <div class="metric"><strong>Share of Answer</strong><p>回答内で自社・競合がどれだけ出たか。通常SEOの順位とは別に見る。</p></div>
+          <div class="metric"><strong>Account Variance</strong><p>アカウント/履歴/地域で出現率がどれだけ揺れたか。</p></div>
+          <div class="metric"><strong>Surface Gap</strong><p>API測定とChat UI測定の差。差が大きいほどUI校正が重要。</p></div>
+          <div class="metric"><strong>Recommendation Strength</strong><p>明確推奨、中立紹介、条件付き推奨、非推奨に分類。</p></div>
+          <div class="metric"><strong>Claim Support</strong><p>回答の原子主張が引用元や自社ページで支えられている割合。</p></div>
+          <div class="metric"><strong>Stability</strong><p>同一条件で同じブランド・URL・主張が再現する割合。</p></div>
+        </div>
+        <div class="note">重要: KPI名に必ず観測面を入れます。例: `API Share of Answer`、`Gemini UI Account Variance`、`Clean Browser Citation Rate`。</div>
+      </section>
+
+      <section id="calculator">
+        <h2>観測規模の計算</h2>
+        <p>大規模化の前に、何件の回答を保存・判定するかを見積もります。UIは工数が重いので、APIとUIを分けて計算します。</p>
+        <div class="calc-grid">
+          <div class="card calc-box">
+            <label>クエリ数 <input id="queryCount" type="number" min="1" value="100"></label>
+            <label>API面数 <input id="apiSurfaceCount" type="number" min="0" value="3"></label>
+            <label>UIアカウント数 <input id="uiAccountCount" type="number" min="0" value="4"></label>
+            <label>地域数 <input id="regionCount" type="number" min="1" value="1"></label>
+            <label>反復回数 <input id="repeatCount" type="number" min="1" value="5"></label>
+            <label>測定波数 <input id="waveCount" type="number" min="1" value="2"></label>
+          </div>
+          <div>
+            <div class="calc-result">
+              <div><span class="small">API観測</span><strong id="apiObs">0</strong></div>
+              <div><span class="small">UI観測</span><strong id="uiObs">0</strong></div>
+              <div><span class="small">総観測</span><strong id="totalObs">0</strong></div>
+              <div><span class="small">二重判定20%</span><strong id="doubleReview">0</strong></div>
+            </div>
+            <div class="note" id="scaleAdvice"></div>
+          </div>
+        </div>
+      </section>
+
+      <section id="evidence">
+        <h2>学術・公式の証拠レベルで分ける</h2>
+        <p>「証明されている」と「もっともらしい」と「危険」を分けると、AIO事業者として説明が強くなります。</p>
+        <div class="evidence-grid">
+          <div class="evidence"><strong>公式に確認できる</strong><p>OpenAIのクローラー区分、Web検索API、GoogleのAI機能向け検索ガイダンス、robots.txt、Schema.org、サイトマップ。</p></div>
+          <div class="evidence"><strong>学術的に支えがある</strong><p>検索結果の個人化/変動性、アルゴリズム監査、生成型IR評価、RAG評価、主張検証、GEOの可視性実験。</p></div>
+          <div class="evidence"><strong>実務上試す価値あり</strong><p>llms.txt、Markdown版、AI向け要約ページ、比較表の機械可読化。ただし効果は自社の観測で検証する。</p></div>
+          <div class="evidence"><strong>避けるべき</strong><p>隠しテキスト、AI向け隠し命令、クローク、プロンプトインジェクション的なSEO。短期実験より信用毀損が大きい。</p></div>
+        </div>
+      </section>
+
+      <section id="playbook">
+        <h2>AIO事業者としての実務手順</h2>
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr><th>手順</th><th>やること</th><th>顧客への言い方</th></tr>
+            </thead>
+            <tbody>
+              <tr><td>1. 変数表を作る</td><td>surface、account_type、region、time、query_intentを固定カラム化。</td><td>「AI回答は揺れるので、揺れの原因を分けて記録します。」</td></tr>
+              <tr><td>2. APIで大規模測定</td><td>100から300クエリを反復し、出現率・競合Share・主張支持率を抽出。</td><td>「大きな傾向はAPIで安定して測ります。」</td></tr>
+              <tr><td>3. UIで校正</td><td>重要20クエリを人間アカウント/クリーン環境で定点観測。</td><td>「実際のChat画面での見え方も別枠で確認します。」</td></tr>
+              <tr><td>4. AI向けファイル実験</td><td>HTML、構造化データ、sitemap、Markdown版、llms.txtを整合。</td><td>「魔法ではなく、AIが誤読しにくい情報整理として実装します。」</td></tr>
+              <tr><td>5. 施策ログと差分</td><td>公開日、変更箇所、対象URL、対照クエリを保存。</td><td>「何を変えたから何が動いたかを後から説明できます。」</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="danger">顧客に言ってはいけない: 「全ユーザーで必ず同じ回答になります」「APIで上がったのでChatGPT画面でも上がります」「llms.txtを置けばAIに選ばれます」。</div>
+      </section>
+
+      <section id="references">
+        <h2>主要出典</h2>
+        <div class="grid-2">
+          <div class="card"><strong>OpenAI Bots</strong><p><a href="https://platform.openai.com/docs/bots" target="_blank" rel="noopener">GPTBot、OAI-SearchBot、ChatGPT-User の区分</a></p></div>
+          <div class="card"><strong>OpenAI Web Search</strong><p><a href="https://developers.openai.com/api/docs/guides/tools-web-search" target="_blank" rel="noopener">APIのWeb検索ツール</a></p></div>
+          <div class="card"><strong>OpenAI Memory and Search</strong><p><a href="https://help.openai.com/en/articles/8590148-memory-faq" target="_blank" rel="noopener">メモリと検索クエリへの影響</a></p></div>
+          <div class="card"><strong>Google AI features</strong><p><a href="https://developers.google.com/search/docs/appearance/ai-features" target="_blank" rel="noopener">AI機能とWebサイトの公式ガイダンス</a></p></div>
+          <div class="card"><strong>Google Spam Policies</strong><p><a href="https://developers.google.com/search/docs/essentials/spam-policies" target="_blank" rel="noopener">隠しテキスト、クローク、操作的施策</a></p></div>
+          <div class="card"><strong>Robots Exclusion Protocol</strong><p><a href="https://www.rfc-editor.org/rfc/rfc9309" target="_blank" rel="noopener">RFC 9309 robots.txt</a></p></div>
+          <div class="card"><strong>llms.txt</strong><p><a href="https://llmstxt.org/" target="_blank" rel="noopener">llms.txt community proposal</a></p></div>
+          <div class="card"><strong>GEO</strong><p><a href="https://arxiv.org/abs/2311.09735" target="_blank" rel="noopener">Generative Engine Optimization</a></p></div>
+          <div class="card"><strong>Search Personalization</strong><p><a href="https://doi.org/10.1145/2488388.2488435" target="_blank" rel="noopener">Measuring Personalization of Web Search</a></p></div>
+          <div class="card"><strong>Behavioral Variability</strong><p><a href="https://doi.org/10.1145/1135777.1135807" target="_blank" rel="noopener">Investigating Behavioral Variability in Web Search</a></p></div>
+          <div class="card"><strong>Generative IR Evaluation</strong><p><a href="https://arxiv.org/abs/2404.08137" target="_blank" rel="noopener">Generative Information Retrieval Evaluation</a></p></div>
+          <div class="card"><strong>Indirect Prompt Injection</strong><p><a href="https://arxiv.org/abs/2302.12173" target="_blank" rel="noopener">Not what you've signed up for: Compromising Real-World LLM-Integrated Applications with Indirect Prompt Injection</a></p></div>
+          <div class="card"><strong>OpenAI Prompt Injections</strong><p><a href="https://openai.com/safety/prompt-injections/" target="_blank" rel="noopener">OpenAI safety note on prompt injections</a></p></div>
+          <div class="card"><strong>OWASP Prompt Injection</strong><p><a href="https://owasp.org/www-community/attacks/PromptInjection" target="_blank" rel="noopener">OWASP prompt injection overview</a></p></div>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <script>
+    function fmt(value) {
+      return Number(value).toLocaleString("ja-JP");
+    }
+
+    function updateCalc() {
+      const queries = Math.max(1, Number(document.getElementById("queryCount").value || 1));
+      const apiSurfaces = Math.max(0, Number(document.getElementById("apiSurfaceCount").value || 0));
+      const uiAccounts = Math.max(0, Number(document.getElementById("uiAccountCount").value || 0));
+      const regions = Math.max(1, Number(document.getElementById("regionCount").value || 1));
+      const repeats = Math.max(1, Number(document.getElementById("repeatCount").value || 1));
+      const waves = Math.max(1, Number(document.getElementById("waveCount").value || 1));
+      const apiObs = queries * apiSurfaces * regions * repeats * waves;
+      const uiObs = queries * uiAccounts * regions * repeats * waves;
+      const total = apiObs + uiObs;
+      document.getElementById("apiObs").textContent = fmt(apiObs);
+      document.getElementById("uiObs").textContent = fmt(uiObs);
+      document.getElementById("totalObs").textContent = fmt(total);
+      document.getElementById("doubleReview").textContent = fmt(Math.ceil(total * 0.2));
+      const uiShare = total ? Math.round((uiObs / total) * 100) : 0;
+      let advice = `この設計ではUI観測が全体の${uiShare}%です。`;
+      if (uiShare > 45) advice += " UIは工数と規約リスクが重いので、API比率を上げるか、重要クエリだけに絞るべきです。";
+      else if (uiShare < 5 && uiAccounts > 0) advice += " UI校正が薄いので、重要クエリだけ別パネルで補うと説明力が上がります。";
+      else advice += " APIで傾向、UIで実体験を校正するバランスとして扱えます。";
+      document.getElementById("scaleAdvice").textContent = advice;
+    }
+
+    document.getElementById("mobileChapterSelect").addEventListener("change", event => {
+      const target = document.querySelector(event.target.value);
+      if (target) target.scrollIntoView({ behavior: "smooth", block: "start" });
+    });
+
+    ["queryCount", "apiSurfaceCount", "uiAccountCount", "regionCount", "repeatCount", "waveCount"].forEach(id => {
+      document.getElementById(id).addEventListener("input", updateCalc);
+    });
+    updateCalc();
+  </script>
+</body>
+</html>
