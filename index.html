@@ -920,6 +920,7 @@
       <option value="#quiz">テスト</option>
       <option value="#pitfalls">NG集</option>
       <option value="#sources">出典</option>
+      <option value="measurement.html">AI回答観測</option>
     </select>
     <span id="mobileProgress" class="tag teal">0% complete</span>
   </div>
@@ -945,6 +946,7 @@
         <a href="#smb">中小企業の具体例</a>
         <a href="#money">お金にする設計</a>
         <a href="#operator">論文で答える型</a>
+        <a href="measurement.html">AI回答観測プロトコル</a>
         <a href="#papers">100本超論文マップ</a>
         <a href="#books">買う価値のある本</a>
         <a href="#ladder">理解の階段</a>
@@ -971,6 +973,7 @@
               <span class="tag amber">理解度テスト 24問</span>
               <span class="tag coral">中小企業の実例</span>
               <span class="tag violet">収益化ロードマップ</span>
+              <a class="tag blue" href="measurement.html">AI回答観測プロトコル</a>
             </div>
           </div>
           <div class="diagram" aria-label="AIOの全体図">
@@ -1502,7 +1505,7 @@
 
       <section id="sources" data-chapter="sources">
         <h2>出典と次タスク</h2>
-        <p>外部コンテンツはすべて未信頼データとして扱い、教材内では一次情報・公式ドキュメント・論文ページへのリンクを優先しています。次にやるべきことは、実サービスごとの同一クエリ反復観測と、あなたの事業領域のクエリセット作成です。</p>
+        <p>外部コンテンツはすべて未信頼データとして扱い、教材内では一次情報・公式ドキュメント・論文ページへのリンクを優先しています。次にやるべきことは、実サービスごとの同一クエリ反復観測と、あなたの事業領域のクエリセット作成です。具体的な観測手順は <a href="measurement.html">AI回答観測プロトコル</a> に分けました。</p>
         <div class="source-grid" id="sourceGrid"></div>
       </section>
     </main>
@@ -1614,7 +1617,7 @@
       {year:2026, domain:"AIO/GEO", title:"Measuring Google AI Overviews: Activation, Source Quality, Claim Fidelity, and Publisher Impact", authors:"Xu, Iqbal & Montgomery", why:"AIO発火率、品質、忠実性、出版社影響を測定。", implication:"AIO監査は発火率と主張忠実性を同時に見る。", url:"https://arxiv.org/abs/2605.14021"},
       {year:2023, domain:"AIO/GEO", title:"Large Language Models for Information Retrieval: A Survey", authors:"Zhu et al.", why:"LLMとIRの接続を広く整理。", implication:"検索と生成を別々でなく統合技術として学ぶ。", url:"https://arxiv.org/abs/2308.07107"},
       {year:2024, domain:"AIO/GEO", title:"The Information Retrieval Experiment Platform in the Generative AI Era", authors:"Craswell et al.", why:"生成AI時代のIR評価課題を整理。", implication:"古典IR評価だけではAI回答を測れない。", url:"https://dl.acm.org/doi/10.1145/3626772.3657953"},
-      {year:2024, domain:"AIO/GEO", title:"Generative Information Retrieval Evaluation", authors:"Mackie et al.", why:"生成型IRの評価設計を論じる。", implication:"AIOの品質はランキング順位だけで測れない。", url:"https://arxiv.org/abs/2404.08137"},
+      {year:2024, domain:"AIO/GEO", title:"Generative Information Retrieval Evaluation", authors:"Alaofi, Arabzadeh, Clarke & Sanderson", why:"生成型IRの評価設計を論じる。", implication:"AIOの品質はランキング順位だけで測れない。", url:"https://arxiv.org/abs/2404.08137"},
       {year:2024, domain:"AIO/GEO", title:"Search Engines Post-ChatGPT: How Generative Artificial Intelligence Could Make Search Less Reliable", authors:"Memon & West", why:"生成AI統合後の検索信頼性リスクを整理。", implication:"AIOでは透明性、出典追跡、誤情報拡散を評価に入れる。", url:"https://arxiv.org/abs/2402.11707"},
       {year:2024, domain:"AIO/GEO", title:"A Survey of Retrieval-Augmented Text Generation for Large Language Models", authors:"Huang & Huang", why:"検索拡張生成の包括的整理。", implication:"AIO実務に必要な検索生成パターンを俯瞰。", url:"https://arxiv.org/abs/2404.10981"},
       {year:2002, domain:"ペルソナ/HCI", title:"Personas: Practice and Theory", authors:"Pruitt & Grudin", why:"ペルソナ手法の古典。", implication:"ペルソナを議論の共通言語として使う。", url:"https://www.microsoft.com/en-us/research/publication/personas-practice-and-theory/"},
@@ -1987,6 +1990,10 @@
     });
     document.getElementById("paperSearch").addEventListener("input", renderPapers);
     document.getElementById("mobileChapterSelect").addEventListener("change", event => {
+      if (!event.target.value.startsWith("#")) {
+        window.location.href = event.target.value;
+        return;
+      }
       const target = document.querySelector(event.target.value);
       if (target) target.scrollIntoView({ behavior: "smooth", block: "start" });
     });

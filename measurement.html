@@ -1,0 +1,735 @@
+<!doctype html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>AI Answer Measurement Lab</title>
+  <style>
+    :root {
+      --bg: #f7f8fb;
+      --paper: #ffffff;
+      --ink: #17212f;
+      --muted: #627084;
+      --line: #d8dee8;
+      --teal: #0f766e;
+      --blue: #2563eb;
+      --amber: #b45309;
+      --coral: #dc5b46;
+      --green: #15803d;
+      --red: #b91c1c;
+      --shadow: 0 10px 28px rgba(23, 33, 47, .08);
+      --radius: 8px;
+    }
+
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      margin: 0;
+      color: var(--ink);
+      background: var(--bg);
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      line-height: 1.65;
+      letter-spacing: 0;
+    }
+    a { color: var(--blue); text-underline-offset: 3px; }
+    h1, h2, h3 { margin: 0; line-height: 1.25; letter-spacing: 0; }
+    h1 { font-size: clamp(30px, 4vw, 48px); margin: 8px 0 14px; }
+    h2 { font-size: 24px; margin-bottom: 12px; }
+    h3 { font-size: 18px; margin: 20px 0 8px; }
+    p { margin: 0 0 12px; }
+    button, input, select, textarea { font: inherit; }
+    button {
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      background: var(--paper);
+      color: var(--ink);
+      min-height: 40px;
+      padding: 8px 12px;
+      cursor: pointer;
+    }
+    button:hover { border-color: var(--teal); background: #e8f5f3; }
+
+    .app-shell {
+      display: grid;
+      grid-template-columns: 240px minmax(0, 1fr);
+      gap: 22px;
+      max-width: 1380px;
+      margin: 0 auto;
+      padding: 20px;
+    }
+
+    .side {
+      position: sticky;
+      top: 16px;
+      align-self: start;
+      max-height: calc(100vh - 32px);
+      overflow: auto;
+      background: var(--paper);
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      padding: 14px;
+    }
+
+    .brand {
+      display: grid;
+      grid-template-columns: 34px 1fr;
+      gap: 10px;
+      align-items: center;
+      margin-bottom: 14px;
+      padding-bottom: 12px;
+      border-bottom: 1px solid var(--line);
+    }
+    .brand-mark {
+      display: grid;
+      place-items: center;
+      width: 34px;
+      height: 34px;
+      border-radius: 7px;
+      background: var(--ink);
+      color: white;
+      font-weight: 800;
+    }
+    .brand strong { display: block; font-size: 14px; }
+    .brand span { display: block; color: var(--muted); font-size: 12px; }
+    nav a {
+      display: block;
+      padding: 8px 9px;
+      border-radius: 7px;
+      color: var(--ink);
+      text-decoration: none;
+      font-size: 14px;
+    }
+    nav a:hover { background: #e8f5f3; color: #0f5e58; }
+
+    main { min-width: 0; }
+    section {
+      background: var(--paper);
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      margin-bottom: 22px;
+      padding: 22px;
+      scroll-margin-top: 16px;
+    }
+
+    .eyebrow {
+      color: var(--teal);
+      font-weight: 700;
+      font-size: 13px;
+      text-transform: uppercase;
+    }
+    .lead {
+      color: #344155;
+      font-size: 17px;
+      max-width: 900px;
+    }
+    .tag-row, .toolbar {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      align-items: center;
+    }
+    .tag {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      border-radius: 999px;
+      background: #edf2f7;
+      color: #38475b;
+      font-size: 12px;
+      padding: 4px 9px;
+      white-space: nowrap;
+    }
+    .tag.teal { background: #dff4ef; color: #0f5e58; }
+    .tag.blue { background: #e7eeff; color: #174ea6; }
+    .tag.amber { background: #fff0d8; color: #8a4500; }
+    .tag.coral { background: #ffe5df; color: #a83d2b; }
+    .tag.green { background: #e5f7eb; color: #125c2e; }
+
+    .hero-grid {
+      display: grid;
+      grid-template-columns: minmax(0, 1.1fr) minmax(300px, .9fr);
+      gap: 18px;
+      align-items: stretch;
+    }
+    .diagram {
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      background: #fbfcfe;
+      padding: 14px;
+      min-height: 260px;
+    }
+    .diagram svg { width: 100%; height: auto; display: block; }
+    .diagram text { font-family: inherit; fill: var(--ink); font-size: 13px; }
+
+    .plain-answer {
+      border: 1px solid #b9dfd8;
+      border-radius: var(--radius);
+      background: #edf9f6;
+      padding: 14px;
+      margin: 14px 0;
+    }
+    .plain-answer strong {
+      display: block;
+      margin-bottom: 5px;
+      color: #0f5e58;
+    }
+
+    .grid-2, .grid-3, .grid-4, .protocol-grid, .metric-grid, .package-grid {
+      display: grid;
+      gap: 12px;
+    }
+    .grid-2 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .grid-3, .package-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+    .grid-4 { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+    .protocol-grid, .metric-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+
+    .card, .metric, .protocol, .package, .paper-card, .risk-card {
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      background: #fbfcfe;
+      padding: 14px;
+    }
+    .card strong, .metric strong, .protocol strong, .package strong, .paper-card strong, .risk-card strong {
+      display: block;
+      margin-bottom: 6px;
+    }
+
+    .table-wrap {
+      overflow: auto;
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      background: white;
+      margin-top: 12px;
+    }
+    table {
+      width: 100%;
+      min-width: 980px;
+      border-collapse: collapse;
+      font-size: 14px;
+    }
+    th, td {
+      padding: 10px 12px;
+      border-bottom: 1px solid var(--line);
+      vertical-align: top;
+      text-align: left;
+    }
+    th { background: #f1f5f9; position: sticky; top: 0; z-index: 1; }
+    tbody tr:hover { background: #fbfcfe; }
+
+    .reason-chain {
+      display: grid;
+      gap: 8px;
+      margin-top: 10px;
+    }
+    .reason-chain div {
+      border-left: 3px solid var(--teal);
+      background: #f6fbfa;
+      padding: 9px 10px;
+      border-radius: 0 var(--radius) var(--radius) 0;
+    }
+    .talk {
+      border: 1px solid #f0d6a8;
+      background: #fff8ec;
+      border-radius: var(--radius);
+      padding: 10px;
+      margin-top: 10px;
+    }
+
+    .calc {
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      background: #fbfcfe;
+      padding: 14px;
+      margin-top: 14px;
+    }
+    .calc-grid {
+      display: grid;
+      grid-template-columns: repeat(5, minmax(0, 1fr));
+      gap: 10px;
+    }
+    .calc label {
+      display: grid;
+      gap: 5px;
+      color: var(--muted);
+      font-size: 13px;
+    }
+    .calc input {
+      width: 100%;
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      padding: 9px 10px;
+      background: white;
+      color: var(--ink);
+    }
+    .calc-result {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 10px;
+      margin-top: 12px;
+    }
+    .calc-result div {
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      background: white;
+      padding: 12px;
+    }
+    .calc-result strong {
+      display: block;
+      font-size: 22px;
+    }
+    textarea {
+      width: 100%;
+      min-height: 220px;
+      resize: vertical;
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      padding: 12px;
+      background: #fbfcfe;
+      color: var(--ink);
+      font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+      font-size: 13px;
+      line-height: 1.5;
+    }
+    .small { color: var(--muted); font-size: 13px; }
+    .note {
+      border-left: 4px solid var(--amber);
+      background: #fff8ec;
+      padding: 12px 14px;
+      border-radius: 0 var(--radius) var(--radius) 0;
+      margin: 14px 0;
+    }
+    .warning {
+      border-left: 4px solid var(--coral);
+      background: #fff1ee;
+      padding: 12px 14px;
+      border-radius: 0 var(--radius) var(--radius) 0;
+      margin: 14px 0;
+    }
+
+    .mobile-bar { display: none; }
+    .mobile-select {
+      max-width: 52vw;
+      min-height: 38px;
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      padding: 7px 9px;
+      background: #fff;
+      color: var(--ink);
+    }
+
+    @media (max-width: 1120px) {
+      .app-shell { grid-template-columns: 210px minmax(0, 1fr); }
+      .hero-grid, .grid-3, .grid-4, .package-grid, .calc-grid, .calc-result {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+    }
+
+    @media (max-width: 760px) {
+      .app-shell {
+        display: block;
+        padding: 74px 12px 12px;
+      }
+      .side { display: none; }
+      .mobile-bar {
+        position: fixed;
+        z-index: 10;
+        top: 0;
+        left: 0;
+        right: 0;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        justify-content: space-between;
+        padding: 10px 12px;
+        background: rgba(255, 255, 255, .94);
+        border-bottom: 1px solid var(--line);
+        backdrop-filter: blur(10px);
+      }
+      section { padding: 16px; }
+      .hero-grid, .grid-2, .grid-3, .grid-4, .protocol-grid, .metric-grid, .package-grid, .calc-grid, .calc-result {
+        grid-template-columns: 1fr;
+      }
+      h1 { font-size: 31px; }
+      table { min-width: 760px; }
+    }
+  </style>
+</head>
+<body>
+  <div class="mobile-bar">
+    <strong>Measure</strong>
+    <select id="mobileChapterSelect" class="mobile-select" aria-label="章へ移動">
+      <option value="#overview">結論</option>
+      <option value="#proof">証明できること</option>
+      <option value="#protocol">観測プロトコル</option>
+      <option value="#metrics">KPI</option>
+      <option value="#annotation">判定設計</option>
+      <option value="#packages">観測プラン</option>
+      <option value="#calculator">工数計算</option>
+      <option value="#papers">論文からの行動</option>
+      <option value="#report">レポート型</option>
+      <option value="#references">出典</option>
+    </select>
+  </div>
+
+  <div class="app-shell">
+    <aside class="side" aria-label="章ナビゲーション">
+      <div class="brand">
+        <div class="brand-mark">AI</div>
+        <div>
+          <strong>AI Answer Measurement Lab</strong>
+          <span>AIO効果証明・観測プロトコル</span>
+        </div>
+      </div>
+      <nav>
+        <a href="index.html">AIO教材へ戻る</a>
+        <a href="#overview">結論</a>
+        <a href="#proof">何を証明できるか</a>
+        <a href="#protocol">観測プロトコル</a>
+        <a href="#metrics">KPI定義</a>
+        <a href="#annotation">判定・監査設計</a>
+        <a href="#packages">効率別プラン</a>
+        <a href="#calculator">観測工数計算</a>
+        <a href="#papers">論文からの行動</a>
+        <a href="#report">顧客レポート型</a>
+        <a href="#references">出典</a>
+      </nav>
+    </aside>
+
+    <main>
+      <section id="overview">
+        <div class="hero-grid">
+          <div>
+            <div class="eyebrow">Measurement first</div>
+            <h1>AI回答の観測は、1回のスクショではなく「固定クエリパネル」の反復測定で証明します。</h1>
+            <p class="lead">AIOの効果証明は、検索順位を見るだけでは足りません。AI回答が出たか、自社が言及されたか、引用されたか、引用が主張を支えているか、競合より扱いが改善したか、問い合わせKPIに近づいたかを、同じ条件で繰り返し観測します。</p>
+            <div class="plain-answer">
+              <strong>調査結論</strong>
+              <p>AIO専用の世界標準プロトコルはまだ成熟途中です。ただし手法はあります。情報検索評価、Web検索行動の変動性研究、RAG/引用評価、事実性評価、生成型IR評価、AI Overviews実測研究、因果推論を組み合わせれば、事業者として説明できる測定設計を作れます。</p>
+            </div>
+            <div class="tag-row">
+              <span class="tag teal">固定クエリパネル</span>
+              <span class="tag blue">反復観測</span>
+              <span class="tag amber">主張支持率</span>
+              <span class="tag coral">pre/post + control</span>
+              <span class="tag green">顧客レポート化</span>
+            </div>
+          </div>
+          <div class="diagram" aria-label="AI回答観測の全体図">
+            <svg viewBox="0 0 720 440" role="img">
+              <defs>
+                <marker id="arrow" markerWidth="10" markerHeight="10" refX="8" refY="5" orient="auto">
+                  <path d="M0,0 L10,5 L0,10 z" fill="#627084"></path>
+                </marker>
+              </defs>
+              <rect x="28" y="42" width="148" height="64" rx="8" fill="#e7eeff" stroke="#2563eb"></rect>
+              <text x="102" y="70" text-anchor="middle" font-weight="700">Query Panel</text>
+              <text x="102" y="92" text-anchor="middle">50-200質問</text>
+              <path d="M176 74 H250" stroke="#627084" stroke-width="2" marker-end="url(#arrow)"></path>
+              <rect x="250" y="42" width="160" height="64" rx="8" fill="#dff4ef" stroke="#0f766e"></rect>
+              <text x="330" y="70" text-anchor="middle" font-weight="700">Run Conditions</text>
+              <text x="330" y="92" text-anchor="middle">地域/端末/日時</text>
+              <path d="M410 74 H486" stroke="#627084" stroke-width="2" marker-end="url(#arrow)"></path>
+              <rect x="486" y="42" width="176" height="64" rx="8" fill="#fff0d8" stroke="#b45309"></rect>
+              <text x="574" y="70" text-anchor="middle" font-weight="700">AI Answers</text>
+              <text x="574" y="92" text-anchor="middle">本文/引用/画像</text>
+
+              <path d="M574 106 V164" stroke="#627084" stroke-width="2" marker-end="url(#arrow)"></path>
+              <rect x="424" y="164" width="298" height="78" rx="8" fill="#ffe5df" stroke="#dc5b46"></rect>
+              <text x="573" y="194" text-anchor="middle" font-weight="700">Claim & Citation Audit</text>
+              <text x="573" y="216" text-anchor="middle">発火/言及/引用/支持/誤情報</text>
+              <path d="M424 204 H332" stroke="#627084" stroke-width="2" marker-end="url(#arrow)"></path>
+              <rect x="132" y="164" width="200" height="78" rx="8" fill="#efe7ff" stroke="#6d28d9"></rect>
+              <text x="232" y="194" text-anchor="middle" font-weight="700">Metrics</text>
+              <text x="232" y="216" text-anchor="middle">率・差分・安定性</text>
+              <path d="M232 242 V304" stroke="#627084" stroke-width="2" marker-end="url(#arrow)"></path>
+              <rect x="92" y="304" width="280" height="70" rx="8" fill="#f1f5f9" stroke="#94a3b8"></rect>
+              <text x="232" y="333" text-anchor="middle" font-weight="700">Proof Report</text>
+              <text x="232" y="356" text-anchor="middle">改善前後 + control + business KPI</text>
+            </svg>
+          </div>
+        </div>
+      </section>
+
+      <section id="proof">
+        <h2>何を証明できるか、何は証明してはいけないか</h2>
+        <p>顧客に対して証明すべきなのは「AIに必ず引用される」ではありません。証明すべきなのは、定義した条件下で、回答面の扱われ方が改善したかです。</p>
+        <div class="grid-3">
+          <div class="card"><strong>観測証明</strong><p>AI回答上で、自社の発火・言及・引用・正確性がどう変わったかを示す。初回診断と月次報告の基本。</p></div>
+          <div class="card"><strong>貢献証明</strong><p>施策対象クエリと未施策クエリ、競合、自社の前後差を比べ、改善にAIO施策が関係した可能性を説明する。</p></div>
+          <div class="card"><strong>因果証明</strong><p>対象/対照、地域差、ページ差、段階導入、時系列モデルを使い「この条件では寄与した」と限定つきで示す。</p></div>
+        </div>
+        <h3>証明レベル</h3>
+        <div class="grid-3">
+          <div class="card"><strong>証明できる</strong><p>同じクエリ、同じ地域、同じエンジン、同じ観測手順で、発火率・言及率・引用率・主張支持率が改善したこと。</p></div>
+          <div class="card"><strong>条件付きで言える</strong><p>処置したページ群の改善後、対象クエリ群で競合より扱いが良くなったこと。control queryとの比較があると強い。</p></div>
+          <div class="card"><strong>言ってはいけない</strong><p>すべてのユーザーで必ず表示される、AI回答順位を保証する、売上増の全因果をAIOだけに帰属する、という主張。</p></div>
+        </div>
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr><th>証明レベル</th><th>観測設計</th><th>言えること</th><th>顧客への表現</th></tr>
+            </thead>
+            <tbody>
+              <tr><td>Level 0</td><td>単発スクショ</td><td>状況証拠だけ。再現性なし。</td><td>「参考例です。施策判断には使いません。」</td></tr>
+              <tr><td>Level 1</td><td>固定クエリを1回観測</td><td>現状診断。</td><td>「いまAI回答でどう扱われているかを棚卸しします。」</td></tr>
+              <tr><td>Level 2</td><td>固定クエリを反復観測</td><td>回答の揺れと平均的な扱われ方。</td><td>「変動込みで、自社・競合・引用の傾向を見ます。」</td></tr>
+              <tr><td>Level 3</td><td>改善前後 + control query</td><td>対象施策が改善に関係した可能性を強く説明できる。</td><td>「対象クエリは改善し、未処置クエリは大きく変わっていません。」</td></tr>
+              <tr><td>Level 4</td><td>地域/ページ/クエリのholdout設計</td><td>より強い因果推定。ただし中小企業ではコストが高い。</td><td>「検証予算がある場合の厳密設計です。」</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <section id="protocol">
+        <h2>効率的な観測プロトコル</h2>
+        <p>効率化の基本は「毎回思いつきで検索しない」ことです。クエリ、環境、反復回数、判定項目を先に固定してから観測します。</p>
+        <div class="protocol-grid">
+          <div class="protocol"><strong>1. Query Panel</strong><p>顧客質問を50から200件に固定する。情報収集、比較、購買、緊急、検証、ブランド、地域で層化する。</p></div>
+          <div class="protocol"><strong>2. Run Conditions</strong><p>日時、国、地域、言語、端末、ログイン状態、検索履歴、ブラウザ、AI検索面を記録する。</p></div>
+          <div class="protocol"><strong>3. Repetition</strong><p>1クエリ1回ではなく、同日反復または週次反復を入れる。変動するAI回答を平均的に見る。</p></div>
+          <div class="protocol"><strong>4. Capture</strong><p>回答本文、引用URL、表示順位、スクリーンショット、HTMLまたはテキスト、実行ログ、ハッシュを保存する。</p></div>
+          <div class="protocol"><strong>5. Annotation</strong><p>発火、言及、引用、競合、原子主張、支持/不支持/不十分、誤情報、ソース品質を判定する。</p></div>
+          <div class="protocol"><strong>6. Report</strong><p>baseline、post、control、競合比較、次の制作タスクを1枚の月次レポートにまとめる。</p></div>
+        </div>
+        <div class="warning">ブラウザ自動化やスクレイピングは、各サービスの規約、robots、レート制限、個人情報保護に従います。APIや公式エクスポートがある場合は優先し、手動観測でも条件と証跡を残します。</div>
+      </section>
+
+      <section id="metrics">
+        <h2>KPI定義: AI回答面を測る</h2>
+        <div class="metric-grid">
+          <div class="metric"><strong>Activation Rate</strong><p>AI回答が出た観測数 / 全観測数。AIOが発火するクエリかを見分ける。</p></div>
+          <div class="metric"><strong>Brand Mention Rate</strong><p>自社名・商品名が回答内に出た観測数 / AI回答観測数。引用がなくても候補化を測る。</p></div>
+          <div class="metric"><strong>Citation Rate</strong><p>自社URLが引用された観測数 / AI回答観測数。AIが根拠として使ったかを見る。</p></div>
+          <div class="metric"><strong>Claim Support Rate</strong><p>支持された原子主張数 / 回答内の原子主張数。引用の正しさを測る。</p></div>
+          <div class="metric"><strong>Competitor Share</strong><p>競合の言及・引用・推奨の比率。自社だけでなく相対位置を見る。</p></div>
+          <div class="metric"><strong>Source Quality Mix</strong><p>公式、第三者、レビュー、古い記事、低品質サイトの構成比。引用の質を見る。</p></div>
+          <div class="metric"><strong>Answer Stability</strong><p>同一条件の反復で、回答・引用・競合がどれだけ一致するか。Jaccardや一致率で見る。</p></div>
+          <div class="metric"><strong>Business Proxy</strong><p>指名検索、直接流入、フォームCV、電話、商談化率。AIO面の変化と事業KPIをつなぐ。</p></div>
+        </div>
+        <div class="note">顧客に出す時は、1つのスコアに潰さない方が安全です。発火率、引用率、主張支持率、競合Share、問い合わせKPIを分けると、何が改善したかが説明できます。</div>
+      </section>
+
+      <section id="annotation">
+        <h2>判定・監査設計</h2>
+        <p>AI回答は流暢なので、ぱっと見の印象で採点すると危険です。回答を原子主張に分解し、それぞれの引用が支えているかを判定します。</p>
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr><th>判定項目</th><th>値</th><th>判定例</th><th>根拠領域</th></tr>
+            </thead>
+            <tbody>
+              <tr><td>answer_present</td><td>0/1</td><td>AI Overviewや回答ボックスが出たか。</td><td>AI Overviews測定</td></tr>
+              <tr><td>brand_mentioned</td><td>0/1</td><td>自社名、商品名、代表サービス名が本文に出たか。</td><td>生成型IR評価</td></tr>
+              <tr><td>brand_cited</td><td>0/1</td><td>自社URLが引用・ソース一覧に出たか。</td><td>引用付き回答評価</td></tr>
+              <tr><td>claim_support</td><td>support / refute / not enough info</td><td>「即日対応」を引用先が明示しているか。</td><td>FEVER / FActScore</td></tr>
+              <tr><td>source_quality</td><td>official / third-party / review / unknown</td><td>公式料金ページか、古いまとめ記事か。</td><td>RAG評価 / AIO実測</td></tr>
+              <tr><td>freshness_ok</td><td>0/1</td><td>料金・キャンペーン・営業時間が最新か。</td><td>FreshLLMs / Corrective RAG</td></tr>
+              <tr><td>actionability</td><td>0-2</td><td>問い合わせ・予約・見積もりの次行動が分かるか。</td><td>Webエージェント評価</td></tr>
+              <tr><td>business_value</td><td>0-3</td><td>購買・商談・予約に近い質問か。</td><td>Web検索意図分類</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <h3>CSV/JSONLテンプレート</h3>
+        <textarea id="schemaBox" readonly>run_id,client,query_id,query_text,query_class,engine,surface,locale,location,device,login_state,run_at,repetition,answer_present,answer_text_hash,answer_url,source_urls,brand_mentioned,brand_position,brand_cited,competitor_mentions,atomic_claims,supported_claims,unsupported_claims,not_enough_info_claims,source_quality,freshness_ok,actionability,business_value,annotator,notes
+2026-05-27-001,client_a,q001,"品川区で夜間対応の水漏れ修理、料金が分かる業者は？",commercial_local,Google AI Overviews,SERP,ja-JP,Tokyo,mobile,logged_out,2026-05-27T09:00:00+09:00,1,1,sha256:...,screenshot://q001-r1.png,"https://example.com/pricing",1,2,1,"competitor_a;competitor_b",4,3,0,1,official,1,2,3,reviewer_1,"A社は引用されたが追加費用条件は不十分"</textarea>
+        <button id="copySchema" type="button">テンプレートをコピー</button>
+        <span id="copyStatus" class="small"></span>
+      </section>
+
+      <section id="packages">
+        <h2>効率別の観測プラン</h2>
+        <div class="package-grid">
+          <div class="package">
+            <strong>Lite: 初回診断</strong>
+            <p>30クエリ x 3エンジン x 3反復 = 270観測。</p>
+            <p class="small">目的: 現状の発火、競合、自社引用、明らかな誤情報を見つける。1週間で納品しやすい。</p>
+          </div>
+          <div class="package">
+            <strong>Standard: 月次運用</strong>
+            <p>80クエリ x 4エンジン x 3反復 x 月1回 = 960観測。</p>
+            <p class="small">目的: 施策前後の変化、競合比較、主張支持率、次の制作優先度を出す。</p>
+          </div>
+          <div class="package">
+            <strong>Proof: 効果証明</strong>
+            <p>100対象クエリ + 50 control queryを、baseline 2週、post 4-8週で観測。</p>
+            <p class="small">目的: 処置したページ群の改善と、未処置群との差を示す。高単価案件向け。</p>
+          </div>
+        </div>
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr><th>フェーズ</th><th>作業</th><th>効率化の要点</th><th>納品物</th></tr>
+            </thead>
+            <tbody>
+              <tr><td>準備</td><td>質問抽出・層化・優先度付け</td><td>CRM、Search Console、広告語、営業録から集め、価値の低いクエリを捨てる。</td><td>Query panel</td></tr>
+              <tr><td>観測</td><td>同一条件で実行</td><td>実行ログ、スクショ、引用URLを自動保存。規約上無理な面は手動で統一手順化。</td><td>Raw observation log</td></tr>
+              <tr><td>判定</td><td>発火・言及・引用・主張支持</td><td>全件を人手精読せず、重要クエリと変化点を重点監査。10-20%は二重判定。</td><td>Annotation table</td></tr>
+              <tr><td>分析</td><td>baseline vs post vs control</td><td>単発値ではなく、率、差分、信頼区間、失注/勝ちクエリを出す。</td><td>Measurement report</td></tr>
+              <tr><td>改善</td><td>ページ制作・修正</td><td>足りない証拠を、料金、比較、FAQ、事例、更新日、外部表記統一に割り振る。</td><td>Action backlog</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <section id="calculator">
+        <h2>観測工数と精度の計算</h2>
+        <p>観測数が少ないと、1件の変化に振り回されます。下の計算機で、観測数と二値KPIのざっくりした95%誤差幅を確認できます。</p>
+        <div class="calc">
+          <div class="calc-grid">
+            <label>クエリ数<input id="queryCount" type="number" min="1" value="80"></label>
+            <label>エンジン数<input id="engineCount" type="number" min="1" value="4"></label>
+            <label>地域/条件数<input id="conditionCount" type="number" min="1" value="1"></label>
+            <label>反復回数<input id="repeatCount" type="number" min="1" value="3"></label>
+            <label>観測波数<input id="waveCount" type="number" min="1" value="2"></label>
+          </div>
+          <div class="calc-result">
+            <div><span class="small">総観測数</span><strong id="totalObs">0</strong></div>
+            <div><span class="small">1波あたり</span><strong id="perWave">0</strong></div>
+            <div><span class="small">二重判定20%</span><strong id="doubleReview">0</strong></div>
+            <div><span class="small">最悪ケース誤差幅</span><strong id="moe">0%</strong></div>
+          </div>
+        </div>
+        <div class="note">誤差幅はp=0.5の二項比率を仮定した概算です。厳密なレポートではWilson区間、ブートストラップ、クエリ単位のクラスタリング、pre/post/controlの差分を分けて扱います。</div>
+      </section>
+
+      <section id="papers">
+        <h2>論文から導く具体行動</h2>
+        <p>この章は、顧客に「なぜその観測が必要なのか」を論文ベースで説明するための翻訳表です。</p>
+        <div class="grid-2">
+          <article class="paper-card">
+            <h3>1. クエリパネルを層化する</h3>
+            <div class="reason-chain">
+              <div><strong>具体行動</strong><p>情報収集、比較、購入、緊急、検証、ブランド、地域で質問を分ける。</p></div>
+              <div><strong>なぜ</strong><p>AI回答の出方は意図で変わるため、混ぜると改善点が分からなくなる。</p></div>
+              <div><strong>論文根拠</strong><p>Broder、Rose & Levinson、JansenらのWeb検索意図分類。</p></div>
+            </div>
+          </article>
+          <article class="paper-card">
+            <h3>2. 1回ではなく反復する</h3>
+            <div class="reason-chain">
+              <div><strong>具体行動</strong><p>同じクエリを同じ条件で複数回、月次で観測する。</p></div>
+              <div><strong>なぜ</strong><p>AI回答と検索行動は揺れる。単発スクショは証明にならない。</p></div>
+              <div><strong>論文根拠</strong><p>White & Druckerの検索行動変動性、Kanoulasらのセッション評価。</p></div>
+            </div>
+          </article>
+          <article class="paper-card">
+            <h3>3. 主張を原子分解して監査する</h3>
+            <div class="reason-chain">
+              <div><strong>具体行動</strong><p>AI回答の「即日対応」「最安」「対象地域」を1主張ずつ切り出し、引用が支持するか判定する。</p></div>
+              <div><strong>なぜ</strong><p>引用があるだけでは正しさを証明できない。</p></div>
+              <div><strong>論文根拠</strong><p>FEVER、FActScore、RAGAS、Verified Quotes。</p></div>
+            </div>
+          </article>
+          <article class="paper-card">
+            <h3>4. 生成型IRとして評価する</h3>
+            <div class="reason-chain">
+              <div><strong>具体行動</strong><p>順位、クリック、引用、本文品質、忠実性を分けて測る。</p></div>
+              <div><strong>なぜ</strong><p>AI検索はリンク順位だけでなく回答本文を生成するため、従来SEOの指標だけでは足りない。</p></div>
+              <div><strong>論文根拠</strong><p>Generative Information Retrieval Evaluation、GEO、AI Overviews実測研究。</p></div>
+            </div>
+          </article>
+          <article class="paper-card">
+            <h3>5. pre/post/controlで効果を主張する</h3>
+            <div class="reason-chain">
+              <div><strong>具体行動</strong><p>改善したページに対応するtarget queryと、触っていないcontrol queryを分ける。</p></div>
+              <div><strong>なぜ</strong><p>全体のAI仕様変更や季節性を、施策効果と混同しないため。</p></div>
+              <div><strong>論文根拠</strong><p>因果推論、Bayesian structural time series、AI検索サマリーの交通影響研究。</p></div>
+            </div>
+          </article>
+          <article class="paper-card">
+            <h3>6. 事業KPIには慎重につなぐ</h3>
+            <div class="reason-chain">
+              <div><strong>具体行動</strong><p>AI回答KPIと、指名検索、直接流入、問い合わせ、商談化率を同じ期間で並べる。</p></div>
+              <div><strong>なぜ</strong><p>AI回答はクリックを減らす可能性があり、流入だけでは価値を見落とす。</p></div>
+              <div><strong>論文根拠</strong><p>Joachimsのクリックログ研究、AI Search Summariesのトラフィック影響研究。</p></div>
+            </div>
+          </article>
+        </div>
+      </section>
+
+      <section id="report">
+        <h2>顧客に出すレポート型</h2>
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr><th>ページ</th><th>入れる内容</th><th>顧客に伝える一言</th></tr>
+            </thead>
+            <tbody>
+              <tr><td>1. Executive summary</td><td>今回の結論、勝ちクエリ、負けクエリ、優先修正3つ。</td><td>「AI回答内で何が変わったかだけ先に出します。」</td></tr>
+              <tr><td>2. Method</td><td>クエリ数、エンジン、地域、端末、反復、期間、判定者。</td><td>「この条件で測った結果です、と再現条件を明示します。」</td></tr>
+              <tr><td>3. KPI table</td><td>発火率、言及率、引用率、主張支持率、競合Share、誤情報。</td><td>「順位ではなく、回答面の扱われ方を見ます。」</td></tr>
+              <tr><td>4. Claim audit</td><td>AI回答の主張、引用URL、支持/不支持/不十分。</td><td>「AIに言われている内容が正しいかを確認します。」</td></tr>
+              <tr><td>5. Competitor map</td><td>競合ごとの言及・引用・推奨・ソース種別。</td><td>「誰に負けているかではなく、どの証拠で負けているかを見ます。」</td></tr>
+              <tr><td>6. Action backlog</td><td>料金表、比較表、FAQ、更新日、外部表記、導線修正。</td><td>「観測結果を制作タスクに変換します。」</td></tr>
+              <tr><td>7. Next measurement</td><td>次回観測日、追加クエリ、control変更、二重判定対象。</td><td>「毎月同じ条件で見て、変化を証明します。」</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <section id="references">
+        <h2>主要出典</h2>
+        <div class="grid-2">
+          <div class="card"><strong>AI Overviews実測</strong><p><a href="https://arxiv.org/abs/2605.14021" target="_blank" rel="noopener">Measuring Google AI Overviews: Activation, Source Quality, Claim Fidelity, and Publisher Impact</a></p></div>
+          <div class="card"><strong>生成型検索評価</strong><p><a href="https://arxiv.org/abs/2404.08137" target="_blank" rel="noopener">Generative Information Retrieval Evaluation</a></p></div>
+          <div class="card"><strong>GEO</strong><p><a href="https://arxiv.org/abs/2311.09735" target="_blank" rel="noopener">GEO: Generative Engine Optimization</a></p></div>
+          <div class="card"><strong>検索行動の変動性</strong><p><a href="https://doi.org/10.1145/1135777.1135807" target="_blank" rel="noopener">Investigating Behavioral Variability in Web Search</a></p></div>
+          <div class="card"><strong>主張検証</strong><p><a href="https://arxiv.org/abs/1803.05355" target="_blank" rel="noopener">FEVER: Fact Extraction and Verification</a></p></div>
+          <div class="card"><strong>原子事実評価</strong><p><a href="https://arxiv.org/abs/2305.14251" target="_blank" rel="noopener">FActScore</a></p></div>
+          <div class="card"><strong>RAG評価</strong><p><a href="https://arxiv.org/abs/2309.15217" target="_blank" rel="noopener">RAGAS</a></p></div>
+          <div class="card"><strong>引用付き回答</strong><p><a href="https://arxiv.org/abs/2203.11147" target="_blank" rel="noopener">Teaching Language Models to Support Answers with Verified Quotes</a></p></div>
+          <div class="card"><strong>鮮度</strong><p><a href="https://arxiv.org/abs/2310.03214" target="_blank" rel="noopener">FreshLLMs</a></p></div>
+          <div class="card"><strong>因果推論</strong><p><a href="https://research.google/pubs/pub41854/" target="_blank" rel="noopener">Inferring Causal Impact Using Bayesian Structural Time-Series Models</a></p></div>
+          <div class="card"><strong>AI Search Summariesと交通影響</strong><p><a href="https://arxiv.org/abs/2602.18455" target="_blank" rel="noopener">Impact of AI Search Summaries on Website Traffic</a></p></div>
+          <div class="card"><strong>Webエージェント</strong><p><a href="https://arxiv.org/abs/2306.06070" target="_blank" rel="noopener">Mind2Web</a> / <a href="https://arxiv.org/abs/2307.13854" target="_blank" rel="noopener">WebArena</a></p></div>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <script>
+    function fmt(value) {
+      return Number(value).toLocaleString("ja-JP");
+    }
+
+    function updateCalc() {
+      const queries = Math.max(1, Number(document.getElementById("queryCount").value || 1));
+      const engines = Math.max(1, Number(document.getElementById("engineCount").value || 1));
+      const conditions = Math.max(1, Number(document.getElementById("conditionCount").value || 1));
+      const repeats = Math.max(1, Number(document.getElementById("repeatCount").value || 1));
+      const waves = Math.max(1, Number(document.getElementById("waveCount").value || 1));
+      const perWave = queries * engines * conditions * repeats;
+      const total = perWave * waves;
+      const doubleReview = Math.ceil(total * 0.2);
+      const moe = 1.96 * Math.sqrt(0.25 / total) * 100;
+      document.getElementById("totalObs").textContent = fmt(total);
+      document.getElementById("perWave").textContent = fmt(perWave);
+      document.getElementById("doubleReview").textContent = fmt(doubleReview);
+      document.getElementById("moe").textContent = `±${moe.toFixed(1)}%`;
+    }
+
+    ["queryCount", "engineCount", "conditionCount", "repeatCount", "waveCount"].forEach(id => {
+      document.getElementById(id).addEventListener("input", updateCalc);
+    });
+
+    document.getElementById("copySchema").addEventListener("click", async () => {
+      const text = document.getElementById("schemaBox").value;
+      try {
+        await navigator.clipboard.writeText(text);
+        document.getElementById("copyStatus").textContent = "コピーしました。";
+      } catch {
+        document.getElementById("copyStatus").textContent = "コピーできませんでした。テキストを選択してください。";
+      }
+    });
+
+    document.getElementById("mobileChapterSelect").addEventListener("change", event => {
+      const target = document.querySelector(event.target.value);
+      if (target) target.scrollIntoView({ behavior: "smooth", block: "start" });
+    });
+
+    updateCalc();
+  </script>
+</body>
+</html>
