@@ -575,7 +575,9 @@
     .week-grid,
     .work-grid,
     .danger-grid,
-    .ladder-grid {
+    .ladder-grid,
+    .operator-grid,
+    .objection-grid {
       display: grid;
       gap: 12px;
     }
@@ -594,7 +596,9 @@
     .week-grid,
     .work-grid,
     .danger-grid,
-    .ladder-grid {
+    .ladder-grid,
+    .operator-grid,
+    .objection-grid {
       grid-template-columns: repeat(2, minmax(0, 1fr));
     }
 
@@ -607,6 +611,8 @@
     .work-card,
     .danger-card,
     .ladder-card,
+    .operator-card,
+    .objection-card,
     .script-card {
       border: 1px solid var(--line);
       border-radius: var(--radius);
@@ -623,9 +629,40 @@
     .work-card strong,
     .danger-card strong,
     .ladder-card strong,
+    .operator-card strong,
+    .objection-card strong,
     .script-card strong {
       display: block;
       margin-bottom: 6px;
+    }
+
+    .operator-card {
+      background: #fff;
+    }
+
+    .operator-card h3 {
+      margin-top: 0;
+    }
+
+    .reason-chain {
+      display: grid;
+      gap: 8px;
+      margin-top: 10px;
+    }
+
+    .reason-chain div {
+      border-left: 3px solid var(--teal);
+      background: #f6fbfa;
+      padding: 9px 10px;
+      border-radius: 0 var(--radius) var(--radius) 0;
+    }
+
+    .talk {
+      border: 1px solid #f0d6a8;
+      background: #fff8ec;
+      border-radius: var(--radius);
+      padding: 10px;
+      margin-top: 10px;
     }
 
     .work-card label {
@@ -782,6 +819,8 @@
       .work-grid,
       .danger-grid,
       .ladder-grid,
+      .operator-grid,
+      .objection-grid,
       .calc-grid,
       .calc-result {
         grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -839,6 +878,8 @@
       .work-grid,
       .danger-grid,
       .ladder-grid,
+      .operator-grid,
+      .objection-grid,
       .calc-grid,
       .calc-result,
       .framework,
@@ -872,6 +913,7 @@
       <option value="#framework">実務フレーム</option>
       <option value="#smb">中小企業の例</option>
       <option value="#money">お金にする</option>
+      <option value="#operator">事業者回答</option>
       <option value="#papers">論文マップ</option>
       <option value="#books">本・講義</option>
       <option value="#ladder">理解の階段</option>
@@ -902,6 +944,7 @@
         <a href="#framework">AIO実務フレーム</a>
         <a href="#smb">中小企業の具体例</a>
         <a href="#money">お金にする設計</a>
+        <a href="#operator">論文で答える型</a>
         <a href="#papers">100本超論文マップ</a>
         <a href="#books">買う価値のある本</a>
         <a href="#ladder">理解の階段</a>
@@ -925,7 +968,7 @@
             <div class="tag-row">
               <span class="tag teal">論文 <span id="paperCount">0</span> 本</span>
               <span class="tag blue">図解 4種</span>
-              <span class="tag amber">理解度テスト 16問</span>
+              <span class="tag amber">理解度テスト 24問</span>
               <span class="tag coral">中小企業の実例</span>
               <span class="tag violet">収益化ロードマップ</span>
             </div>
@@ -1249,6 +1292,147 @@
         </div>
       </section>
 
+      <section id="operator" data-chapter="operator">
+        <h2>AIO事業者として、論文ベースで答える型</h2>
+        <p>顧客に出す答えは「やりましょう」だけでは弱いです。AIO事業者としては、具体行動、理由、論文根拠、商談での一言をセットで持ちます。</p>
+        <div class="plain-answer">
+          <strong>回答テンプレート</strong>
+          <p>「具体的には〇〇をします。なぜなら、AI検索は△△のように情報を選ぶためです。この考え方は□□の研究と接続できます。だから御社では、まず◇◇を納品物として作ります。」</p>
+        </div>
+
+        <div class="operator-grid">
+          <article class="operator-card">
+            <h3>1. まずキーワードではなく顧客質問を集める</h3>
+            <div class="reason-chain">
+              <div><strong>具体行動</strong><p>営業メモ、問い合わせ、商談録、口コミから「顧客がAIに聞きそうな質問」を50個作る。例: 「品川区 水漏れ 夜間 料金」ではなく「夜に水漏れした時、追加費用が分かる業者は？」</p></div>
+              <div><strong>なぜ</strong><p>人は単語ではなく、不安・不足知識・目的を持って検索します。AI検索では自然文の質問がそのまま回答生成の入口になります。</p></div>
+              <div><strong>論文根拠</strong><p>BelkinのASKは「知識の不足状態」から検索が始まると説明します。Kuhlthauは検索過程に不確実性や不安があることを示しました。Broder、Rose & Levinson、Jansenらは検索意図の分類を整理しています。</p></div>
+            </div>
+            <p class="talk">商談での一言: 「SEOキーワードだけでなく、お客さんが決められない理由を質問に変えます。AIはその質問に答えるので、質問設計が最初の商品になります。」</p>
+          </article>
+
+          <article class="operator-card">
+            <h3>2. 1つの質問を料金・地域・比較・不安に分解する</h3>
+            <div class="reason-chain">
+              <div><strong>具体行動</strong><p>各クエリを「定義」「料金」「比較」「対象外」「手順」「証拠」に分け、対応ページやFAQを割り当てる。</p></div>
+              <div><strong>なぜ</strong><p>AI検索は複雑な質問をそのまま1回で処理せず、複数のサブ質問に分けて根拠を集める動きをします。</p></div>
+              <div><strong>論文根拠</strong><p>Self-Ask with Search、IRCoT、ReActは、複雑な質問を分解し、検索と推論を交互に進める考え方を示します。HotpotQAは複数根拠をまたぐQAの難しさを扱います。</p></div>
+            </div>
+            <p class="talk">商談での一言: 「AIは“おすすめ業者”だけを見ていません。料金、対応地域、リスク、比較条件を分けて確認するので、ページもその単位で用意します。」</p>
+          </article>
+
+          <article class="operator-card">
+            <h3>3. 主張ごとに証拠ページを作る</h3>
+            <div class="reason-chain">
+              <div><strong>具体行動</strong><p>「即日対応」「追加費用なし」「小ロット対応」などの主張を1行ずつ分解し、支持するURL、表、日付、写真、条件を対応させる。</p></div>
+              <div><strong>なぜ</strong><p>AI回答は引用が付いていても、その引用が主張を本当に支えているとは限りません。事業者側で主張と証拠を揃える必要があります。</p></div>
+              <div><strong>論文根拠</strong><p>FEVERは主張を証拠で検証する枠組みです。MenickらのVerified Quotesは、回答を検証可能な引用で支える重要性を示します。RAGの研究は外部文脈を使って生成する構成を扱います。</p></div>
+            </div>
+            <p class="talk">商談での一言: 「“強みを書きましょう”ではなく、“その強みをAIが引用できる証拠にしましょう”がAIOです。」</p>
+          </article>
+
+          <article class="operator-card">
+            <h3>4. 長文記事より、抜き出しやすい表・FAQ・短い定義を置く</h3>
+            <div class="reason-chain">
+              <div><strong>具体行動</strong><p>1段落1主張、見出し、比較表、FAQ、対象外条件、更新日を入れる。重要情報はページ中央に埋めず、冒頭と表に出す。</p></div>
+              <div><strong>なぜ</strong><p>AI検索はページ全体より、回答に使えるパッセージや断片を探します。長文の中央に重要情報が埋もれると使われにくくなります。</p></div>
+              <div><strong>論文根拠</strong><p>DPR、ColBERT、BERT再ランキングはパッセージ検索や意味的関連性を扱います。Lost in the Middleは、長い文脈の中央情報が使われにくい問題を示します。</p></div>
+            </div>
+            <p class="talk">商談での一言: 「記事を長くするより、AIと人間がそのまま抜ける“料金表・比較表・FAQ”を作る方が先です。」</p>
+          </article>
+
+          <article class="operator-card">
+            <h3>5. ペルソナは年齢ではなく、証拠ニーズで分ける</h3>
+            <div class="reason-chain">
+              <div><strong>具体行動</strong><p>「安さを確認したい人」「失敗が怖い人」「社内稟議に根拠が必要な人」「今すぐ手順が欲しい人」に分け、それぞれに必要な証拠を作る。</p></div>
+              <div><strong>なぜ</strong><p>AI検索では、誰に向けた回答かより、意思決定に必要な証拠が揃っているかが重要になります。</p></div>
+              <div><strong>論文根拠</strong><p>Pruitt & Grudinはペルソナを設計の共通言語として扱います。一方、Chapmanらはペルソナの過信を批判し、Salminenらはデータ駆動ペルソナの必要性を整理しています。</p></div>
+            </div>
+            <p class="talk">商談での一言: 「30代男性向け、では浅いです。“何を証拠にすればこの人が決められるか”まで落とします。」</p>
+          </article>
+
+          <article class="operator-card">
+            <h3>6. 観測は1回ではなく、条件固定で毎月測る</h3>
+            <div class="reason-chain">
+              <div><strong>具体行動</strong><p>同じ50クエリを、同じ地域・言語・ログイン条件で、Google AI Overviews、ChatGPT Search、Perplexityなどで月次観測する。</p></div>
+              <div><strong>なぜ</strong><p>AI回答は検索履歴、地域、タイミング、エンジン差で変わります。1回のスクリーンショットでは施策判断に使えません。</p></div>
+              <div><strong>論文根拠</strong><p>White & DruckerはWeb検索行動の変動性を示しました。Kanoulasらはセッション全体で検索を評価する必要性を扱います。AI Overviews測定研究は発火率や引用品質を実測対象にしています。</p></div>
+            </div>
+            <p class="talk">商談での一言: 「AIOは順位保証ではありません。条件を固定して、発火率・引用率・誤引用・問い合わせ変化を測る運用です。」</p>
+          </article>
+
+          <article class="operator-card">
+            <h3>7. 信頼を作るために、制約とデメリットも書く</h3>
+            <div class="reason-chain">
+              <div><strong>具体行動</strong><p>対応できない地域、追加料金が出る条件、納期が延びる条件、向いていない顧客、保証外条件を明記する。</p></div>
+              <div><strong>なぜ</strong><p>AI回答は短く要約されるため、制約がないページは過剰に良く見える形で引用されやすく、後で顧客不満につながります。</p></div>
+              <div><strong>論文根拠</strong><p>Lee & See、Hoff & Bashirは自動化への適切な信頼を扱います。LiaoらはユーザーがAIに求める説明を整理し、Amershiらは人間AI相互作用の設計指針を示します。</p></div>
+            </div>
+            <p class="talk">商談での一言: 「良いことだけ書くと、AIが誤解して紹介するリスクがあります。制約を書くことは、CVを下げるためではなく、信頼を上げるためです。」</p>
+          </article>
+
+          <article class="operator-card">
+            <h3>8. 商品は「診断 -> 証拠制作 -> 月次監査」で売る</h3>
+            <div class="reason-chain">
+              <div><strong>具体行動</strong><p>初回はAI検索可視性診断を売り、次に証拠ページ制作、最後に月次観測と改善へつなげる。</p></div>
+              <div><strong>なぜ</strong><p>いきなり制作を売ると、何が足りないかが曖昧です。先に観測して、競合との差分と誤引用を見せると、制作の必要性が説明できます。</p></div>
+              <div><strong>論文根拠</strong><p>情報検索評価、QA/RAG評価、AI Overviews実測研究は、検索結果や回答を観測し評価する発想に基づきます。AIO事業ではこの評価設計を商材化します。</p></div>
+            </div>
+            <p class="talk">商談での一言: 「まず診断で“AIにどう見られているか”を見ます。その結果から、作るべきページを決めるので無駄な記事量産になりません。」</p>
+          </article>
+
+          <article class="operator-card">
+            <h3>9. 社名・住所・資格・サービス名の表記を揃える</h3>
+            <div class="reason-chain">
+              <div><strong>具体行動</strong><p>公式サイト、Googleビジネスプロフィール、SNS、業界ポータル、求人、プレスリリースで、会社名、所在地、代表者、資格、サービス名、対応地域を統一する。</p></div>
+              <div><strong>なぜ</strong><p>AIが候補を集める時、同じ会社・同じサービスだと判断しやすい状態を作る必要があります。表記ゆれがあると、実体情報と評判が分散します。</p></div>
+              <div><strong>論文根拠</strong><p>Brin & PageやPageRankはリンク・引用を権威シグナルとして扱いました。Sparck JonesのIDFは識別力の高い語の重要性を示します。AIOでは、実体名と外部文脈の一貫性に翻訳できます。</p></div>
+            </div>
+            <p class="talk">商談での一言: 「AIが御社を“同じ会社”として迷わないよう、外に出ている社名・住所・資格・サービス名を揃えます。」</p>
+          </article>
+
+          <article class="operator-card">
+            <h3>10. 更新日・適用期間・変更履歴を入れる</h3>
+            <div class="reason-chain">
+              <div><strong>具体行動</strong><p>料金、在庫、対応エリア、補助金、営業時間、キャンペーンには、更新日、適用期間、変更履歴、例外条件を入れる。</p></div>
+              <div><strong>なぜ</strong><p>AI検索は検索で鮮度を補おうとします。古い料金や条件が残っていると、AIが過去情報を根拠として拾い、誤回答につながります。</p></div>
+              <div><strong>論文根拠</strong><p>FreshLLMsは検索拡張で新しい情報を補う方向を扱います。Corrective RAGは取得文書の品質が回答に影響する問題を示します。AI Overviews測定研究も主張忠実性を評価対象にしています。</p></div>
+            </div>
+            <p class="talk">商談での一言: 「古い料金をAIに拾われると商談で揉めます。更新日と適用条件は、CV改善だけでなく誤回答対策です。」</p>
+          </article>
+
+          <article class="operator-card">
+            <h3>11. KPIは順位ではなく、回答内の扱われ方まで見る</h3>
+            <div class="reason-chain">
+              <div><strong>具体行動</strong><p>発火率、自社引用率、競合引用率、主張支持率、誤情報数、指名検索、直接流入、問い合わせ品質を月次で並べる。</p></div>
+              <div><strong>なぜ</strong><p>AI回答が出るとクリックが減る場合があります。従来の順位やクリックだけでは、AI回答内で候補に入ったか、正しく説明されたかを測れません。</p></div>
+              <div><strong>論文根拠</strong><p>Joachimsはクリックログをランキング学習に使いましたが、生成回答面ではクリック以外の評価が必要になります。Mackieらの生成型IR評価、FActScore、RAGASは回答品質や忠実性を測る視点を与えます。</p></div>
+            </div>
+            <p class="talk">商談での一言: 「検索順位だけではなく、AI回答の中で“候補に入ったか、根拠として使われたか、正しく言われたか”を見ます。」</p>
+          </article>
+
+          <article class="operator-card">
+            <h3>12. フォーム・予約・見積もり導線をAIにも読める形にする</h3>
+            <div class="reason-chain">
+              <div><strong>具体行動</strong><p>問い合わせボタン、予約フォーム、見積もり条件、必要写真、在庫確認、API連携の説明を、ラベルと手順が明確な形にする。</p></div>
+              <div><strong>なぜ</strong><p>AI検索は回答だけでなく、Web閲覧、予約、購入、フォーム入力の補助へ広がっています。人間だけでなく、エージェントが理解できる導線が資産になります。</p></div>
+              <div><strong>論文根拠</strong><p>WebGPT、ReAct、Mind2Web、WebArena、WebLINX、Gorillaは、検索・閲覧・操作・API利用を含むエージェント的行動を扱います。</p></div>
+            </div>
+            <p class="talk">商談での一言: 「これからはAIが読むだけでなく操作します。フォームや見積もり条件も、機械が迷わない営業導線にします。」</p>
+          </article>
+        </div>
+
+        <h3>反論された時の論文ベース回答</h3>
+        <div class="objection-grid">
+          <div class="objection-card"><strong>SEOと何が違うの？</strong><p>SEOは検索結果に並ぶための施策です。AIOはAI回答の中で、比較対象・引用元・判断材料として使われるための設計です。IRのランキング研究に加え、RAG、引用付き回答、主張検証の研究領域まで見ます。</p></div>
+          <div class="objection-card"><strong>効果保証できる？</strong><p>AI回答そのものは変動するため保証しません。代わりに、クエリセット、観測条件、発火率、引用率、主張支持率、問い合わせKPIを保証可能な作業範囲として定義します。</p></div>
+          <div class="objection-card"><strong>記事を増やせばいい？</strong><p>量より証拠構造です。DPRやColBERTのようなパッセージ検索の考え方では、回答に使える断片、表、FAQ、明確な主張が重要になります。</p></div>
+          <div class="objection-card"><strong>料金表を出したくない</strong><p>全価格を出せない場合でも、最低価格、変動条件、見積もりに必要な情報、追加費用の例は出せます。比較・購買クエリでは価格情報が意思決定の証拠になります。</p></div>
+          <div class="objection-card"><strong>AI回答は変動するから意味がないのでは？</strong><p>変動するからこそ、1回のスクショではなく条件固定の月次観測をします。変動をなくす仕事ではなく、変動の中でも採用されやすい証拠構造を増やす仕事です。</p></div>
+          <div class="objection-card"><strong>論文は現場に関係ある？</strong><p>論文をそのまま売るのではありません。情報検索研究は何を測るか、RAG研究はどんな証拠を作るか、信頼研究はどう誤解を減らすかを決めるために使います。</p></div>
+        </div>
+      </section>
+
       <section id="papers" data-chapter="papers">
         <h2>100本超の論文マップ</h2>
         <p>下のリストは、AIO/LLM検索を「情報検索」「RAG/QA」「AI検索実測」「エージェント」「ペルソナ/人間行動」「信頼と評価」に分けた読書プログラムです。すべてを同じ重さで読む必要はありません。まず各カテゴリの古典2本、転換点2本、最新2本を読むと地図ができます。</p>
@@ -1326,9 +1510,9 @@
     <aside class="progress" aria-label="進捗">
       <h2>進捗</h2>
       <div class="meter"><span id="progressMeter"></span></div>
-      <div class="progress-row"><span>完了章</span><strong id="chapterProgress">0 / 16</strong></div>
+      <div class="progress-row"><span>完了章</span><strong id="chapterProgress">0 / 17</strong></div>
       <div class="progress-row"><span>論文リスト</span><strong id="paperProgress">0</strong></div>
-      <div class="progress-row"><span>クイズ</span><strong id="quizProgress">0 / 16</strong></div>
+      <div class="progress-row"><span>クイズ</span><strong id="quizProgress">0 / 24</strong></div>
       <div class="progress-row"><span>ランク</span><strong id="rankLabel">開始前</strong></div>
     </aside>
   </div>
@@ -1522,7 +1706,15 @@
       {q:"小学生向けにAIOを説明するなら、最も近いものはどれですか。", type:"single", options:["AIに秘密の命令を入れること","AIが紹介しやすいように、お店の情報を分かりやすく置くこと","文字数を増やすこと","検索広告だけを増やすこと"], answer:[1], chapter:"plain", explain:"AIOは小技ではなく、AIにも人間にも分かる情報と根拠を置くことです。"},
       {q:"地域の修理会社が最初に作るべき証拠として妥当なものをすべて選んでください。", type:"multi", options:["対応エリア","料金表","夜間や追加費用の条件","作業写真や事例","根拠なしの地域No.1"], answer:[0,1,2,3], chapter:"smb", explain:"中小企業では、問い合わせ前の不安を減らす証拠が最優先です。根拠なしNo.1は危険です。"},
       {q:"AIOをお金にする入口商品として最も売りやすいものはどれですか。", type:"single", options:["成果保証つき順位アップ","AI検索可視性診断","根拠なし記事100本量産","競合名を隠すだけ"], answer:[1], chapter:"money", explain:"まず診断で現状、競合、誤引用、足りない証拠を見える化すると提案につなげやすいです。"},
-      {q:"AI回答が「この会社は最短即日対応」と書いたが、引用先には営業時間しか書いていません。監査結果として最も妥当なのはどれですか。", type:"single", options:["支持","不十分","必ず正しい","引用があるので確認不要"], answer:[1], chapter:"pitfalls", explain:"営業時間だけでは最短即日対応という主張を支えきれません。主張と証拠を分けて見ます。"}
+      {q:"AI回答が「この会社は最短即日対応」と書いたが、引用先には営業時間しか書いていません。監査結果として最も妥当なのはどれですか。", type:"single", options:["支持","不十分","必ず正しい","引用があるので確認不要"], answer:[1], chapter:"pitfalls", explain:"営業時間だけでは最短即日対応という主張を支えきれません。主張と証拠を分けて見ます。"},
+      {q:"AIO事業者が最初に顧客へ提案すべき行動として最も妥当なのはどれですか。", type:"single", options:["いきなり記事100本を作る","問い合わせや商談録から顧客質問を50個作る","全ページを画像だけにする","AI回答の変動を無視する"], answer:[1], chapter:"operator", explain:"BelkinやKuhlthauの情報探索研究に接続すると、人は不安や不足知識から検索します。まず顧客質問を作ります。"},
+      {q:"「記事を増やせばAIOになる」と言われた時の反論として正しいものをすべて選んでください。", type:"multi", options:["量より証拠構造が重要","表、FAQ、短い定義、主張ごとの根拠が必要","長文なら必ずAIに引用される","パッセージ単位で抜き出しやすくする"], answer:[0,1,3], chapter:"operator", explain:"DPR、ColBERT、BERT再ランキングなどの考え方から、回答に使える断片と構造が重要です。"},
+      {q:"AIOの月次運用で固定すべき条件をすべて選んでください。", type:"multi", options:["同じクエリセット","地域と言語","ログイン状態や履歴条件","観測するAI検索エンジン","その日の気分"], answer:[0,1,2,3], chapter:"operator", explain:"AI回答は変動するため、条件を固定しないと比較できません。White & Druckerの検索行動変動性の視点にも接続します。"},
+      {q:"顧客に「効果保証できる？」と聞かれた時、AIO事業者の回答として最も妥当なのはどれですか。", type:"single", options:["AI回答順位を必ず保証します","何も測りません","AI回答自体は保証せず、観測条件・発火率・引用率・主張支持率・問い合わせKPIを測定します","根拠なしNo.1を書きます"], answer:[2], chapter:"operator", explain:"変動するAI回答そのものではなく、観測可能なKPIと納品物を保証可能範囲にします。"},
+      {q:"社名・住所・資格・サービス名の表記を揃える理由として正しいものはどれですか。", type:"single", options:["見た目だけを整えるため","AIが同じ会社・同じサービスだと判断しやすくするため","価格を隠すため","検索結果から消えるため"], answer:[1], chapter:"operator", explain:"実体情報の一貫性は、候補化と信頼判断の土台になります。"},
+      {q:"料金ページに更新日と適用条件を書く理由として妥当なものをすべて選んでください。", type:"multi", options:["古い価格の誤引用を減らす","適用期間を明確にする","価格が変わる条件を説明する","情報をわざと曖昧にする"], answer:[0,1,2], chapter:"operator", explain:"FreshLLMsやCorrective RAGの視点からも、取得される情報の鮮度と品質は回答品質に影響します。"},
+      {q:"AIOで見るべきKPIとして妥当なものをすべて選んでください。", type:"multi", options:["AI回答発火率","自社引用率","主張支持率","誤情報数","順位だけ"], answer:[0,1,2,3], chapter:"operator", explain:"生成回答面では順位だけでなく、回答内の扱われ方と忠実性を測ります。"},
+      {q:"AIエージェント時代にフォームや予約導線を整える理由はどれですか。", type:"single", options:["人間だけでなくAIが手順を理解して操作補助する可能性があるため","フォームを隠すため","全ページをPDFだけにするため","問い合わせを減らすため"], answer:[0], chapter:"operator", explain:"WebGPT、ReAct、Mind2Web、WebArena、WebLINXなどは、検索・閲覧・操作を統合する方向を示します。"}
     ];
 
     const diagrams = {
